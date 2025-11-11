@@ -7,6 +7,7 @@ import Profile from '../pages/Profile.vue';
 import Settings from '../pages/Settings.vue';
 import Feed from '../pages/Feed.vue';
 import PrivateChat from '../pages/PrivateChat.vue';
+import Messages from '../pages/MessagesView.vue';
 
 // Definimos la lista de rutas de nuestra aplicación
 const routes = [
@@ -60,7 +61,15 @@ const routes = [
         meta: { 
             requiresAuth: true 
         }
+    },
+    { 
+    path: '/messages', 
+    component: Messages,
+    name: 'Messages',
+    meta: { 
+        requiresAuth: true 
     }
+}
 ];
 
 const router = createRouter({
