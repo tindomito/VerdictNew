@@ -24,7 +24,15 @@
         </div>
 
         <!-- Formulario para crear post -->
-        <CreatePost @created="handlePostCreated" />
+        <CreatePost v-if="!editingPost" @created="handlePostCreated" />
+
+        <!-- Formulario para editar post -->
+        <EditPost
+            v-if="editingPost"
+            :post="editingPost"
+            @updated="handlePostUpdated"
+            @cancel="handleCancelEdit"
+        />
 
         <!-- Loading state inicial -->
         <div v-if="initialLoading" class="flex justify-center py-12">
@@ -107,6 +115,7 @@
 
 <script>
 import CreatePost from '../components/CreatePost.vue';
+import EditPost from '../components/EditPost.vue';
 import PostCard from '../components/PostCard.vue';
 import { getPosts, deletePost, subscribeToPostsChanges, POST_CATEGORIES } from '../services/posts.js';
 
@@ -114,6 +123,7 @@ export default {
     name: 'Feed',
     components: {
         CreatePost,
+        EditPost,
         PostCard
     },
     data() {
@@ -127,7 +137,8 @@ export default {
             loadingMore: false,
             error: null,
             categories: POST_CATEGORIES,
-            realtimeChannel: null
+            realtimeChannel: null,
+            editingPost: null
         };
     },
     methods: {
@@ -200,8 +211,29 @@ export default {
          * Maneja la edición de un post
          */
         handleEditPost(post) {
-            // TODO: Implementar modal de edición
-            console.log('Edit post:', post);
+            this.editingPost = post;
+            // Scroll to top para mostrar el formulario de edición
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        },
+
+        /**
+         * Maneja la actualización de un post
+         */
+        handlePostUpdated(updatedPost) {
+            // El post se actualizará automáticamente por Realtime
+            // Pero lo actualizamos manualmente para feedback inmediato
+            const index = this.posts.findIndex(p => p.id === this.editingPost.id);
+            if (index !== -1) {
+                this.posts[index] = { ...this.posts[index], ...updatedPost };
+            }
+            this.editingPost = null;
+        },
+
+        /**
+         * Maneja la cancelación de la edición
+         */
+        handleCancelEdit() {
+            this.editingPost = null;
         },
 
         /**
