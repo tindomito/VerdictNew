@@ -30,7 +30,7 @@ Después de crear el bucket, configura las siguientes políticas:
 3. Haz clic en "New Policy"
 4. Selecciona "Custom policy"
 5. Configura:
-   - **Name**: `Public read access`
+   - **Name**: `  Public read access`
    - **Allowed operation**: SELECT
    - **Target roles**: `public`
    - **Policy definition**: `true`

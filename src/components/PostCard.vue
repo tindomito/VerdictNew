@@ -203,6 +203,7 @@ export default {
             showImageModal: false
         };
     },
+    
     computed: {
         /**
          * Si el post pertenece al usuario actual
@@ -294,10 +295,12 @@ export default {
             this.showImageModal = false;
         },
 
-        handlePostImageError(event) {
-            console.error('Error loading post image:', this.post.image_url);
-            event.target.style.display = 'none';
-        }
+handlePostImageError(event) {
+    console.error('Error loading post image:', this.post.image_url);
+    setTimeout(() => {
+        event.target.src = this.post.image_url + '?retry=' + Date.now();
+    }, 1000);
+}
     }
 };
 </script>
