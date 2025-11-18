@@ -42,6 +42,8 @@
                 @like="handleLikePost"
                 @comment="handleCommentPost"
                 @share="handleSharePost"
+                @comment-added="handleCommentAdded"
+                @comment-deleted="handleCommentDeleted"
             />
 
             <!-- Botón cargar más -->
@@ -237,7 +239,23 @@ export default {
          */
         handleCommentPost(postId) {
             console.log('Comment post:', postId);
-            // TODO: Implementar sistema de comentarios
+            // Los comentarios se manejan dentro de PostCard
+        },
+
+        /**
+         * Maneja cuando se agrega un comentario
+         */
+        handleCommentAdded(data) {
+            console.log('Comment added to post:', data);
+            // Podríamos actualizar el contador de comentarios aquí si es necesario
+        },
+
+        /**
+         * Maneja cuando se elimina un comentario
+         */
+        handleCommentDeleted(data) {
+            console.log('Comment deleted from post:', data);
+            // Podríamos actualizar el contador de comentarios aquí si es necesario
         },
 
         /**

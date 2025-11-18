@@ -107,6 +107,23 @@
                     <span class="text-sm font-medium">Compartir</span>
                 </button>
             </div>
+
+            <!-- Sección de comentarios -->
+            <transition
+                enter-active-class="transition ease-out duration-200"
+                enter-from-class="opacity-0 -translate-y-2"
+                enter-to-class="opacity-100 translate-y-0"
+                leave-active-class="transition ease-in duration-150"
+                leave-from-class="opacity-100 translate-y-0"
+                leave-to-class="opacity-0 -translate-y-2"
+            >
+                <CommentsList
+                    v-if="showComments"
+                    :post-id="post.id"
+                    @comment-added="handleCommentAdded"
+                    @comment-deleted="handleCommentDeleted"
+                />
+            </transition>
         </div>
     </article>
 </template>
@@ -115,23 +132,28 @@
 import { useAuth } from '../composables/useAuth.js';
 import { getCategoryName, getCategoryIcon } from '../services/posts.js';
 import { createSlugFromDisplayName } from '../services/profiles.js';
+import CommentsList from './CommentsList.vue';
 
 export default {
     name: 'PostCard',
+    components: {
+        CommentsList
+    },
     props: {
         post: {
             type: Object,
             required: true
         }
     },
-    emits: ['edit', 'delete', 'like', 'comment', 'share'],
+    emits: ['edit', 'delete', 'like', 'comment', 'share', 'comment-added', 'comment-deleted'],
     setup() {
         const { userId } = useAuth();
         return { currentUserId: userId, getCategoryName, getCategoryIcon, createSlugFromDisplayName };
     },
     data() {
         return {
-            showOptions: false
+            showOptions: false,
+            showComments: false
         };
     },
     computed: {
@@ -195,15 +217,24 @@ export default {
         handleLike() {
             this.$emit('like', this.post.id);
         },
-        
+
         handleComment() {
+            this.showComments = !this.showComments;
             this.$emit('comment', this.post.id);
         },
-        
+
         handleShare() {
             this.$emit('share', this.post);
         },
-        
+
+        handleCommentAdded(comment) {
+            this.$emit('comment-added', { postId: this.post.id, comment });
+        },
+
+        handleCommentDeleted(commentId) {
+            this.$emit('comment-deleted', { postId: this.post.id, commentId });
+        },
+
         handleImageError(event) {
             event.target.style.display = 'none';
         }
