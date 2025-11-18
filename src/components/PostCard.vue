@@ -70,6 +70,17 @@
                 <p class="text-gray-700 whitespace-pre-wrap">
                     {{ post.content }}
                 </p>
+
+                <!-- Imagen del post -->
+                <div v-if="post.image_url" class="mt-4">
+                    <img
+                        :src="post.image_url"
+                        :alt="post.title"
+                        class="w-full rounded-lg object-cover max-h-96 cursor-pointer hover:opacity-95 transition-opacity"
+                        @click="openImageModal"
+                        @error="handlePostImageError"
+                    />
+                </div>
             </div>
 
             <!-- Acciones del post -->
@@ -125,6 +136,41 @@
                 />
             </transition>
         </div>
+
+        <!-- Modal para imagen en tamaño completo -->
+        <Teleport to="body">
+            <transition
+                enter-active-class="transition ease-out duration-200"
+                enter-from-class="opacity-0"
+                enter-to-class="opacity-100"
+                leave-active-class="transition ease-in duration-150"
+                leave-from-class="opacity-100"
+                leave-to-class="opacity-0"
+            >
+                <div
+                    v-if="showImageModal"
+                    @click="closeImageModal"
+                    class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-90 p-4"
+                >
+                    <div class="relative max-w-7xl max-h-screen">
+                        <button
+                            @click="closeImageModal"
+                            class="absolute top-4 right-4 p-2 bg-white text-gray-800 rounded-full hover:bg-gray-100 transition-colors z-10"
+                        >
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
+                        <img
+                            :src="post.image_url"
+                            :alt="post.title"
+                            class="max-w-full max-h-screen object-contain"
+                            @click.stop
+                        />
+                    </div>
+                </div>
+            </transition>
+        </Teleport>
     </article>
 </template>
 
@@ -153,7 +199,8 @@ export default {
     data() {
         return {
             showOptions: false,
-            showComments: false
+            showComments: false,
+            showImageModal: false
         };
     },
     computed: {
@@ -236,6 +283,19 @@ export default {
         },
 
         handleImageError(event) {
+            event.target.style.display = 'none';
+        },
+
+        openImageModal() {
+            this.showImageModal = true;
+        },
+
+        closeImageModal() {
+            this.showImageModal = false;
+        },
+
+        handlePostImageError(event) {
+            console.error('Error loading post image:', this.post.image_url);
             event.target.style.display = 'none';
         }
     }

@@ -3,6 +3,7 @@
  * Interactúa con la tabla posts de Supabase
  */
 import { supabase } from './supabase.js';
+import { deletePostImage } from './storage.js';
 
 /**
  * Categorías disponibles para posts
@@ -25,19 +26,26 @@ export const POST_CATEGORIES = [
 export async function createPost(postData) {
     try {
         const { data: { user } } = await supabase.auth.getUser();
-        
+
         if (!user) {
             return { post: null, error: { message: 'Usuario no autenticado' } };
         }
 
+        const insertData = {
+            user_id: user.id,
+            title: postData.title,
+            content: postData.content,
+            category: postData.category || 'general'
+        };
+
+        // Agregar image_url si existe
+        if (postData.image_url) {
+            insertData.image_url = postData.image_url;
+        }
+
         const { data, error } = await supabase
             .from('posts')
-            .insert({
-                user_id: user.id,
-                title: postData.title,
-                content: postData.content,
-                category: postData.category || 'general'
-            })
+            .insert(insertData)
             .select()
             .single();
 
@@ -170,6 +178,14 @@ export async function updatePost(postId, updates) {
  */
 export async function deletePost(postId) {
     try {
+        // Primero obtener el post para saber si tiene imagen
+        const { data: post } = await supabase
+            .from('posts')
+            .select('image_url')
+            .eq('id', postId)
+            .single();
+
+        // Eliminar el post
         const { error } = await supabase
             .from('posts')
             .delete()
@@ -177,6 +193,11 @@ export async function deletePost(postId) {
 
         if (error) {
             return { success: false, error };
+        }
+
+        // Eliminar la imagen si existe
+        if (post?.image_url) {
+            await deletePostImage(post.image_url);
         }
 
         return { success: true, error: null };
