@@ -4,6 +4,7 @@
 import { supabase } from './supabase.js';
 
 const BUCKET_NAME = 'post-images';
+const AVATAR_FOLDER = 'avatars'; // Subcarpeta para avatares de perfil
 
 /**
  * Sube una imagen al bucket de Supabase
@@ -145,4 +146,113 @@ export function validateImageFile(file) {
     }
 
     return { valid: true, error: null };
+}
+
+/**
+ * Sube una imagen de avatar de perfil al bucket de Supabase
+ * @param {File} file - Archivo de imagen a subir
+ * @param {string} userId - ID del usuario que sube la imagen
+ * @returns {Promise<{url: string|null, error: Object|null}>}
+ */
+export async function uploadProfileAvatar(file, userId) {
+    try {
+        // Validar que sea una imagen
+        const validation = validateImageFile(file);
+        if (!validation.valid) {
+            return { url: null, error: { message: validation.error } };
+        }
+
+        // Generar nombre único para el archivo
+        const fileExt = file.name.split('.').pop();
+        const fileName = `${AVATAR_FOLDER}/${userId}.${fileExt}`;
+
+        // Subir archivo (upsert true para sobrescribir si existe)
+        const { data, error } = await supabase.storage
+            .from(BUCKET_NAME)
+            .upload(fileName, file, {
+                cacheControl: '3600',
+                upsert: true // Sobrescribir avatar anterior del mismo usuario
+            });
+
+        if (error) {
+            console.error('Error uploading avatar:', error);
+            return { url: null, error };
+        }
+
+        // Obtener URL pública
+        const { data: { publicUrl } } = supabase.storage
+            .from(BUCKET_NAME)
+            .getPublicUrl(data.path);
+
+        return { url: publicUrl, error: null };
+    } catch (error) {
+        console.error('Error in uploadProfileAvatar:', error);
+        return { url: null, error: { message: 'Error al subir el avatar' } };
+    }
+}
+
+/**
+ * Elimina el avatar de perfil del bucket de Supabase
+ * @param {string} avatarUrl - URL del avatar a eliminar
+ * @returns {Promise<{success: boolean, error: Object|null}>}
+ */
+export async function deleteProfileAvatar(avatarUrl) {
+    try {
+        if (!avatarUrl) {
+            return { success: true, error: null };
+        }
+
+        // Extraer el path del archivo de la URL
+        const url = new URL(avatarUrl);
+        const pathParts = url.pathname.split(`/${BUCKET_NAME}/`);
+        if (pathParts.length < 2) {
+            return { success: false, error: { message: 'URL de avatar inválida' } };
+        }
+
+        const filePath = pathParts[1];
+
+        // Solo eliminar si está en la carpeta de avatares
+        if (!filePath.startsWith(AVATAR_FOLDER)) {
+            return { success: true, error: null }; // No eliminar URLs externas
+        }
+
+        // Eliminar archivo
+        const { error } = await supabase.storage
+            .from(BUCKET_NAME)
+            .remove([filePath]);
+
+        if (error) {
+            console.error('Error deleting avatar:', error);
+            return { success: false, error };
+        }
+
+        return { success: true, error: null };
+    } catch (error) {
+        console.error('Error in deleteProfileAvatar:', error);
+        // No fallar si hay error al eliminar el avatar
+        return { success: true, error: null };
+    }
+}
+
+/**
+ * Actualiza el avatar de perfil (elimina el anterior y sube el nuevo)
+ * @param {File} newFile - Nueva imagen de avatar
+ * @param {string} oldAvatarUrl - URL del avatar anterior
+ * @param {string} userId - ID del usuario
+ * @returns {Promise<{url: string|null, error: Object|null}>}
+ */
+export async function updateProfileAvatar(newFile, oldAvatarUrl, userId) {
+    try {
+        // Subir nueva imagen (con upsert true, sobrescribe automáticamente)
+        const { url, error } = await uploadProfileAvatar(newFile, userId);
+
+        if (error) {
+            return { url: null, error };
+        }
+
+        return { url, error: null };
+    } catch (error) {
+        console.error('Error in updateProfileAvatar:', error);
+        return { url: null, error: { message: 'Error al actualizar el avatar' } };
+    }
 }
