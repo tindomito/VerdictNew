@@ -205,17 +205,13 @@ export default {
         };
     },
     computed: {
-        /**
-         * ID del usuario del perfil a mostrar
-         */
+        //ID del usuario del perfil a mostrar
         profileIdentifier() {
             // Si hay ID en la ruta, usarlo; si no, usar el del usuario actual
             return this.route.params.id || this.currentUserId;
         },
         
-        /**
-         * Si es el perfil del usuario actual
-         */
+        //Si es el perfil del usuario actual
         isOwnProfile() {
             // Comparar tanto por ID como por slug del display_name actual
             if (this.profile && this.currentUserId) {
@@ -226,17 +222,13 @@ export default {
             return this.profileIdentifier === this.currentUserId;
         },
         
-        /**
-         * Display name del usuario actual
-         */
+        //Display name del usuario actual
         currentUserDisplayName() {
             const { userDisplayName } = useAuth();
             return userDisplayName.value;
         },
         
-        /**
-         * Iniciales para el avatar
-         */
+        //Iniciales para el avatar
         avatarInitials() {
             if (this.profile?.display_name) {
                 return this.profile.display_name
@@ -249,9 +241,7 @@ export default {
             return 'U';
         },
         
-        /**
-         * Fecha formateada de cuando se unió (formato corto)
-         */
+        //Fecha formateada de cuando se unió (formato corto)
         memberSinceFormatted() {
             if (!this.profile?.created_at) return 'N/A';
             
@@ -262,9 +252,7 @@ export default {
             });
         },
         
-        /**
-         * Fecha detallada de cuando se unió
-         */
+        //Fecha detallada de cuando se unió
         memberSinceDetailed() {
             if (!this.profile?.created_at) return 'Fecha desconocida';
             
@@ -276,9 +264,7 @@ export default {
             });
         },
         
-        /**
-         * Última actividad formateada
-         */
+        //Última actividad formateada
         lastActivityFormatted() {
             if (!this.profile?.updated_at) return 'Nunca';
             
@@ -294,9 +280,7 @@ export default {
         }
     },
     watch: {
-        /**
-         * Watch para detectar cambios en el parámetro de la ruta
-         */
+        //Watch para detectar cambios en el parámetro de la ruta
         'route.params.id'(newId, oldId) {
             if (newId && newId !== oldId) {
                 console.log('Route param changed:', { oldId, newId });
@@ -311,9 +295,7 @@ export default {
         }
     },
     methods: {
-        /**
-         * Carga el perfil del usuario
-         */
+        //Carga el perfil del usuario
         async loadProfile() {
             console.log('=== ENTERING loadProfile ===');
             console.log('Loading profile for identifier:', this.profileIdentifier);
@@ -377,9 +359,7 @@ export default {
             }
         },
         
-        /**
-         * Carga las estadísticas del perfil
-         */
+        //Carga las estadísticas del perfil
         async loadStats() {
             // Cargar posts del usuario para contar
             await this.loadUserPosts();
@@ -391,9 +371,7 @@ export default {
             };
         },
         
-        /**
-         * Carga los posts del usuario
-         */
+        //Carga los posts del usuario
         async loadUserPosts() {
             if (!this.profile?.id) return;
             
@@ -417,9 +395,7 @@ export default {
             }
         },
         
-        /**
-         * Maneja la eliminación de un post
-         */
+        //Maneja la eliminación de un post
         async handleDeletePost(postId) {
             // Importar dinámicamente para no cargar siempre
             const { deletePost } = await import('../services/posts.js');
@@ -444,9 +420,7 @@ export default {
             }
         },
         
-        /**
-         * Placeholders para acciones de posts
-         */
+        //Placeholders para acciones de posts
         handleEditPost(post) {
             console.log('Edit post:', post);
         },
@@ -463,22 +437,18 @@ export default {
             console.log('Share post:', post);
         },
         
-        /**
-         * Maneja el toggle de seguir/no seguir
-         */
+        //Maneja el toggle de seguir/no seguir
         async handleFollowToggle() {
-            // Placeholder para futura funcionalidad
+            
             this.followLoading = true;
             
             setTimeout(() => {
                 this.followLoading = false;
-                // aca va la lógica de seguir/no seguir
+                // AGREGAR lógica de seguir/no seguir?
             }, 1000);
         },
         
-        /**
-         * Maneja errores de carga de imagen
-         */
+        // Maneja errores de carga de imagen
         handleImageError(event) {
             event.target.style.display = 'none';
         }

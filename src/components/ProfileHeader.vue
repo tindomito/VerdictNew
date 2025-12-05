@@ -138,7 +138,7 @@ const props = defineProps({
 defineEmits(['edit-profile', 'follow-toggle']);
 
 /**
- * Computed para las iniciales del avatar
+   Computed para las iniciales del avatar
  */
 const avatarInitials = computed(() => {
   if (!props.profile.display_name) return 'U';
@@ -151,7 +151,7 @@ const avatarInitials = computed(() => {
 });
 
 /**
- * Computed para el slug del perfil (para chat)
+   Computed para el slug del perfil (para chat)
  */
 const profileSlug = computed(() => {
   if (!props.profile) return '';
@@ -161,7 +161,8 @@ const profileSlug = computed(() => {
 });
 
 /**
- * Maneja errores de carga de imagen
+  
+Maneja errores de carga de imagen
  */
 function handleImageError(event) {
   event.target.style.display = 'none';

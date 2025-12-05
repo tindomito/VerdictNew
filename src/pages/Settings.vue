@@ -344,24 +344,18 @@ export default {
         };
     },
     computed: {
-        /**
-         * Validación del formulario
-         */
+        // Validación del formulario
         isFormValid() {
             return this.form.display_name.trim().length > 0 && 
                    this.bioCharCount <= 500;
         },
         
-        /**
-         * Contador de caracteres de la bio
-         */
+        // Contador de caracteres de la bio
         bioCharCount() {
             return this.form.bio.length;
         },
         
-        /**
-         * Iniciales para el avatar
-         */
+        // Iniciales para el avatar
         avatarInitials() {
             if (this.form.display_name) {
                 return this.form.display_name
@@ -374,9 +368,7 @@ export default {
             return 'U';
         },
         
-        /**
-         * Validación del formulario de contraseña
-         */
+        // Validación del formulario de contraseña
         isPasswordFormValid() {
             return (
                 this.passwordForm.newPassword.length >= 6 &&
@@ -385,9 +377,7 @@ export default {
         }
     },
     methods: {
-        /**
-         * Inicializa el formulario con los datos del perfil
-         */
+        // Inicializa el formulario con los datos del perfil
         initializeForm() {
             if (this.currentProfile) {
                 this.form = {
@@ -398,25 +388,19 @@ export default {
             }
         },
         
-        /**
-         * Resetea el formulario a los valores originales
-         */
+        // Resetea el formulario a los valores originales
         resetForm() {
             this.initializeForm();
             this.clearMessages();
         },
         
-        /**
-         * Limpia los mensajes de estado
-         */
+        // Limpia los mensajes de estado
         clearMessages() {
             this.successMessage = null;
             this.errorMessage = null;
         },
         
-        /**
-         * Maneja la actualización del perfil
-         */
+        // Maneja la actualización del perfil
         async handleUpdateProfile() {
             this.clearMessages();
             this.saveLoading = true;
@@ -462,17 +446,13 @@ export default {
             }
         },
         
-        /**
-         * Maneja la actualización a PRO (placeholder)
-         */
+        // Maneja la actualización a PRO (placeholder)
         async handleUpgradeToPro() {
             // Por ahora solo un placeholder
             alert('Funcionalidad de actualización a PRO próximamente disponible');
         },
         
-        /**
-         * Maneja el cambio de contraseña
-         */
+        // Maneja el cambio de contraseña
         async handleChangePassword() {
             this.passwordSuccess = null;
             this.passwordError = null;
@@ -504,7 +484,7 @@ export default {
                     return;
                 }
                 
-                // Éxito
+                // exito
                 this.passwordSuccess = 'Contraseña cambiada correctamente';
                 
                 // Limpiar formulario
@@ -526,9 +506,7 @@ export default {
             }
         },
         
-        /**
-         * Maneja el cierre de sesión
-         */
+        // Maneja el cierre de sesión
         async handleLogout() {
             if (confirm('¿Estás seguro de que quieres cerrar sesión?')) {
                 try {
@@ -549,9 +527,7 @@ export default {
             }
         },
         
-        /**
-         * Maneja errores de carga de imagen
-         */
+        // Maneja errores de carga de imagen
         handleImageError(event) {
             event.target.style.display = 'none';
         }
@@ -576,9 +552,7 @@ export default {
         }
     },
     
-    /**
-     * Watcher para actualizar el formulario cuando cambie el perfil
-     */
+    // Watcher para actualizar el formulario cuando cambie el perfil
     watch: {
         currentProfile: {
             handler(newProfile) {

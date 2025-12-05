@@ -140,9 +140,7 @@ export default {
         };
     },
     methods: {
-        /**
-         * Maneja el envío del formulario de login
-         */
+        //Maneja el envío del formulario de login
         async handleLogin() {
             this.loading = true;
             this.error = null;

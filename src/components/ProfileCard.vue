@@ -72,7 +72,7 @@
                 </div>
             </div>
 
-            <!-- Botón de acción (opcional) -->
+            <!-- Boton de accion (opcional) -->
             <div v-if="showAction && !compact" class="flex-shrink-0">
                 <button
                     @click.stop="$emit('action', profile)"
@@ -99,58 +99,42 @@ export default {
         RankBadge
     },
     props: {
-        /**
-         * Objeto del perfil a mostrar
-         */
+        // Objeto del perfil a mostrar
         profile: {
             type: Object,
             required: true
         },
-        /**
-         * Si la tarjeta es clickeable
-         */
+        // Si la tarjeta es clickeable
         clickable: {
             type: Boolean,
             default: false
         },
-        /**
-         * Versión compacta de la tarjeta
-         */
+        // Version compacta de la tarjeta
         compact: {
             type: Boolean,
             default: false
         },
-        /**
-         * Mostrar progreso del rango
-         */
+        // Mostrar progreso del rango
         showRankProgress: {
             type: Boolean,
             default: false
         },
-        /**
-         * Mostrar estadísticas básicas
-         */
+        // Mostrar estadisticas basicas
         showStats: {
             type: Boolean,
             default: true
         },
-        /**
-         * Mostrar botón de acción
-         */
+        // Mostrar boton de accion
         showAction: {
             type: Boolean,
             default: false
         },
-        /**
-         * Texto del botón de acción
-         */
+        // Texto del boton de accion
         actionText: {
             type: String,
             default: 'Ver Perfil'
         },
-        /**
-         * Estado de carga
-         */
+        // Estado de carga
         loading: {
             type: Boolean,
             default: false
@@ -158,16 +142,12 @@ export default {
     },
     emits: ['click', 'action'],
     computed: {
-        /**
-         * Nombre para mostrar
-         */
+        // Nombre para mostrar
         displayName() {
             return this.profile?.display_name || 'Usuario sin nombre';
         },
         
-        /**
-         * Iniciales para el avatar
-         */
+        // Iniciales para el avatar
         avatarInitials() {
             if (this.profile?.display_name) {
                 return this.profile.display_name
@@ -180,9 +160,7 @@ export default {
             return 'U';
         },
         
-        /**
-         * Fecha formateada de cuando se unió
-         */
+        // Fecha formateada de cuando se unio
         memberSince() {
             if (!this.profile?.created_at) return 'Desconocido';
             
@@ -194,9 +172,7 @@ export default {
         }
     },
     methods: {
-        /**
-         * Maneja el click en la tarjeta
-         */
+        // Maneja el click en la tarjeta
         handleClick() {
             if (this.clickable) {
                 this.$emit('click', this.profile);
@@ -204,7 +180,7 @@ export default {
         },
         
         /**
-         * Maneja errores de carga de imagen
+          Maneja errores de carga de imagen
          */
         handleImageError(event) {
             event.target.style.display = 'none';

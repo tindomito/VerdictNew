@@ -178,9 +178,7 @@ export default {
         };
     },
     computed: {
-        /**
-         * Valida que el formulario esté completo y correcto
-         */
+        // Valida que el formulario esté completo y correcto
         isFormValid() {
             return (
                 this.form.displayName.trim().length > 0 &&
@@ -191,9 +189,7 @@ export default {
         }
     },
     methods: {
-        /**
-         * Maneja el envío del formulario de registro
-         */
+        // Maneja el envío del formulario de registro
         async handleRegister() {
             // Validaciones adicionales
             if (this.form.password !== this.form.confirmPassword) {

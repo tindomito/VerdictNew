@@ -192,9 +192,7 @@ export default {
         };
     },
     methods: {
-        /**
- * Envía un nuevo mensaje
- */
+        //Envía un nuevo mensaje
         async handleSubmit() {
             if (!this.newMessage.content.trim()) return;
             
@@ -216,7 +214,6 @@ export default {
                     return;
                 }
                 
-                // OPTIMISTIC UPDATE: Agregar el mensaje inmediatamente
                 if (data) {
                     this.messages.push({
                         id: data.id,
@@ -224,7 +221,7 @@ export default {
                         content: data.content,
                         created_at: data.created_at,
                         display_name: this.userDisplayName || 'Usuario',
-                        avatar_url: null // o el avatar si lo tenés
+                        avatar_url: null 
                     });
                 }
                 
@@ -243,9 +240,7 @@ export default {
             }
         },
         
-        /**
-         * Carga los mensajes iniciales
-         */
+        //Carga los mensajes iniciales
         async loadMessages() {
             this.loading = true;
             
@@ -273,12 +268,7 @@ export default {
             }
         },
         
-        /**
-         * Configura suscripción en tiempo real
-         */
-/**
- * Configura suscripción en tiempo real
- */
+        //Configura suscripción en tiempo real
         setupRealtime() {
             this.chatChannel = supabase.channel('global_chat_realtime');
             
@@ -317,9 +307,7 @@ export default {
             this.chatChannel.subscribe();
         },
         
-        /**
-         * Scroll al final del chat
-         */
+        //Scroll al final del chat
         scrollToBottom() {
             const container = this.$refs.messageContainer;
             if (container) {
@@ -327,9 +315,7 @@ export default {
             }
         },
         
-        /**
-         * Obtiene iniciales del nombre
-         */
+        //Obtiene iniciales del nombre
         getInitials(name) {
             if (!name) return 'U';
             return name.split(' ')
@@ -339,9 +325,7 @@ export default {
                 .slice(0, 2);
         },
         
-        /**
-         * Formatea la hora del mensaje
-         */
+        //Formatea la hora del mensaje
         formatTime(timestamp) {
             if (!timestamp) return '';
             
@@ -362,9 +346,7 @@ export default {
             });
         },
         
-        /**
-         * Maneja errores de carga de imagen
-         */
+        //Maneja errores de carga de imagen
         handleImageError(event) {
             event.target.style.display = 'none';
         }

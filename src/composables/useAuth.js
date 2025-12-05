@@ -1,6 +1,6 @@
 /**
- * Composable para manejar el estado de autenticación
- * Proporciona reactividad y estado global del usuario
+  Composable para manejar el estado de autenticación
+  Proporciona reactividad y estado global del usuario
  */
 import { ref, computed } from 'vue';
 import { subscribeToAuthChanges, getCurrentUser } from '../services/auth.js';
@@ -22,7 +22,7 @@ export function useAuth() {
     const userId = computed(() => user.value?.id || null);
 
     /**
-     * Inicializa el estado de autenticación
+      Inicializa el estado de autenticación
      */
     async function initialize() {
         if (initialized.value) {
@@ -32,7 +32,7 @@ export function useAuth() {
 
         console.log('Initializing auth...');
         loading.value = true;
-        
+
         try {
             // Obtener usuario actual si existe
             const { user: currentUser } = await getCurrentUser();
@@ -48,7 +48,7 @@ export function useAuth() {
 
             loading.value = false;
             initialized.value = true;
-            
+
             console.log('Auth initialized successfully:', {
                 user: user.value,
                 isAuthenticated: !!user.value
@@ -60,16 +60,14 @@ export function useAuth() {
     }
 
     /**
-     * Actualiza manualmente el usuario
+      Actualiza manualmente el usuario
      */
     async function refreshUser() {
         const { user: currentUser } = await getCurrentUser();
         user.value = currentUser;
     }
 
-    /**
-     * Limpia el estado del usuario
-     */
+    // Limpia el estado del usuario
     function clearUser() {
         user.value = null;
     }
@@ -82,7 +80,7 @@ export function useAuth() {
         userEmail,
         userDisplayName,
         userId,
-        
+
         // Métodos
         initialize,
         refreshUser,

@@ -236,7 +236,7 @@
       </div>
     </div>
 
-    <!-- Menú móvil -->
+    <!-- Menu móvil -->
     <div 
       v-show="mobileMenuOpen" 
       class="sm:hidden px-2 space-y-1 bg-gray-800 pb-3 relative z-50" 
@@ -280,7 +280,7 @@
           </svg>
           Mensajes
       </RouterLink>
-        <!-- Buscador móvil -->
+        <!-- Buscador movil -->
         <div class="pt-3 pb-2" data-search-dropdown>
           <div class="relative">
             <input
@@ -301,7 +301,7 @@
             </svg>
           </div>
           
-          <!-- Resultados búsqueda móvil -->
+          <!-- Resultados busqueda movil -->
           <div v-if="searchFocused && searchQuery.length > 0" class="mt-2 space-y-1">
             <!-- Loading -->
             <div v-if="searchLoading" class="px-3 py-2 text-sm text-gray-400 text-center">
@@ -377,7 +377,7 @@
         </div>
       </template>
 
-      <!-- Enlaces de auth para móvil cuando NO esté autenticado -->
+      <!-- Enlaces de auth para movil cuando NO esta autenticado -->
       <template v-if="!isAuthenticated && !loading">
         <div class="border-t border-gray-700 pt-3 mt-3 space-y-1">
           <RouterLink 
@@ -420,9 +420,7 @@ const searchLoading = ref(false);
 const searchFocused = ref(false);
 let searchTimeout = null;
 
-/**
- * Computed para obtener el slug del perfil del usuario actual
- */
+//Computed para obtener el slug del perfil del usuario actual
 const userProfileSlug = computed(() => {
   if (userDisplayName.value) {
     return createSlugFromDisplayName(userDisplayName.value);
@@ -445,9 +443,7 @@ const userInitials = computed(() => {
   return 'U';
 });
 
-/**
- * Obtiene las iniciales de un usuario para el avatar
- */
+// Obtiene las iniciales de un usuario para el avatar
 function getUserInitials(name) {
   if (!name) return 'U';
   return name
@@ -458,9 +454,7 @@ function getUserInitials(name) {
     .slice(0, 2);
 }
 
-/**
- * Busca usuarios en la base de datos
- */
+// Busca usuarios en la base de datos
 async function searchUsers(query) {
   if (!query || query.length < 2) {
     searchResults.value = [];
@@ -484,9 +478,7 @@ async function searchUsers(query) {
   }
 }
 
-/**
- * Maneja el input de búsqueda con debounce
- */
+// Maneja el input de busqueda con debounce
 function handleSearch() {
   clearTimeout(searchTimeout);
   
@@ -500,25 +492,19 @@ function handleSearch() {
   }, 300);
 }
 
-/**
- * Cierra el buscador
- */
+// Cierra el buscador
 function closeSearch() {
   searchFocused.value = false;
   searchQuery.value = '';
   searchResults.value = [];
 }
 
-/**
- * Cierra el menú móvil
- */
+// Cierra el menu movil
 function closeMobileMenu() {
   mobileMenuOpen.value = false;
 }
 
-/**
- * Maneja el logout del usuario
- */
+// Maneja el logout del usuario
 async function handleLogout() {
   try {
     profileMenuOpen.value = false;
@@ -536,11 +522,9 @@ async function handleLogout() {
   }
 }
 
-/**
- * Cierra los menús cuando se hace click fuera
- */
+// Cierra los menus cuando se hace click fuera
 function handleClickOutside(event) {
-  // Verifica si el click fue dentro del menú móvil o su botón
+  // Verifica si el click fue dentro del menu movil o su boton
   const mobileMenuButton = event.target.closest('[data-mobile-menu]');
   const mobileMenuContent = event.target.closest('[data-mobile-menu-content]');
   

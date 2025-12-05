@@ -3,7 +3,7 @@
         <h2 class="text-xl font-bold text-gray-900 mb-4">Editar Publicación</h2>
 
         <form @submit.prevent="handleSubmit">
-            <!-- Selector de categoría -->
+            <!-- Selector de categoria -->
             <div class="mb-4">
                 <label for="category" class="block text-sm font-medium text-gray-700 mb-2">
                     Categoría
@@ -27,7 +27,7 @@
                 </div>
             </div>
 
-            <!-- Título -->
+            <!-- Titulo -->
             <div class="mb-4">
                 <label for="title" class="block text-sm font-medium text-gray-700 mb-2">
                     Título
@@ -200,9 +200,7 @@ export default {
         };
     },
     computed: {
-        /**
-         * Valida que el formulario esté completo
-         */
+        // Valida que el formulario este completo
         isFormValid() {
             return (
                 this.form.title.trim().length > 0 &&
@@ -212,9 +210,7 @@ export default {
             );
         },
 
-        /**
-         * Verifica si hay cambios respecto al post original
-         */
+        // Verifica si hay cambios respecto al post original
         hasChanges() {
             const textChanged = (
                 this.form.title !== this.originalData.title ||
@@ -226,9 +222,7 @@ export default {
         }
     },
     methods: {
-        /**
-         * Maneja la selección de imagen
-         */
+        // Maneja la seleccion de imagen
         handleImageSelect(event) {
             const file = event.target.files[0];
             if (!file) return;
@@ -254,9 +248,7 @@ export default {
             reader.readAsDataURL(file);
         },
 
-        /**
-         * Elimina la imagen
-         */
+        // Elimina la imagen
         removeImage() {
             this.selectedImage = null;
             this.imagePreview = null;
@@ -272,9 +264,7 @@ export default {
             }
         },
 
-        /**
-         * Maneja el envío del formulario
-         */
+        // Maneja el envio del formulario
         async handleSubmit() {
             if (!this.isFormValid || !this.hasChanges) return;
 
@@ -331,9 +321,7 @@ export default {
             }
         },
 
-        /**
-         * Maneja la cancelación
-         */
+        // Maneja la cancelacion
         handleCancel() {
             if (this.hasChanges) {
                 if (confirm('¿Descartar los cambios?')) {

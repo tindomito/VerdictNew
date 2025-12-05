@@ -142,9 +142,7 @@ export default {
         };
     },
     methods: {
-        /**
-         * Carga las publicaciones
-         */
+        //Carga las publicaciones
         async loadPosts(reset = false) {
             if (reset) {
                 this.currentPage = 0;
@@ -183,45 +181,31 @@ export default {
             }
         },
 
-        /**
-         * Carga más publicaciones (paginación)
-         */
+        //Carga más publicaciones (paginación)
         async loadMore() {
             this.currentPage++;
             await this.loadPosts();
         },
 
-        /**
-         * Maneja el cambio de categoría
-         */
+        //Maneja el cambio de categoría
         async handleCategoryChange() {
             await this.loadPosts(true);
         },
 
-        /**
-         * Maneja la creación de un nuevo post
-         */
+        //Maneja la creación de un nuevo post
         handlePostCreated(post) {
-            // El post nuevo se agregará automáticamente por Realtime
-            // Pero si queremos feedback inmediato, podemos agregarlo manualmente
             console.log('Post created:', post);
         },
 
-        /**
-         * Maneja la edición de un post
-         */
+        //Maneja la edición de un post
         handleEditPost(post) {
             this.editingPost = post;
             // Scroll to top para mostrar el formulario de edición
             window.scrollTo({ top: 0, behavior: 'smooth' });
         },
 
-        /**
-         * Maneja la actualización de un post
-         */
+        //Maneja la actualización de un post
         handlePostUpdated(updatedPost) {
-            // El post se actualizará automáticamente por Realtime
-            // Pero lo actualizamos manualmente para feedback inmediato
             const index = this.posts.findIndex(p => p.id === this.editingPost.id);
             if (index !== -1) {
                 this.posts[index] = { ...this.posts[index], ...updatedPost };
@@ -229,16 +213,12 @@ export default {
             this.editingPost = null;
         },
 
-        /**
-         * Maneja la cancelación de la edición
-         */
+        //Maneja la cancelación de la edición
         handleCancelEdit() {
             this.editingPost = null;
         },
 
-        /**
-         * Maneja la eliminación de un post
-         */
+        //Maneja la eliminación de un post
         async handleDeletePost(postId) {
             try {
                 const { success, error } = await deletePost(postId);
@@ -258,49 +238,35 @@ export default {
             }
         },
 
-        /**
-         * Maneja el like de un post (placeholder)
-         */
+        //Maneja el like de un post (placeholder)
         handleLikePost(postId) {
             console.log('Like post:', postId);
-            // TODO: Implementar sistema de likes
+            // FALTA IMPLEMENTAR SISTEMA DE LIKES 
         },
 
-        /**
-         * Maneja comentar un post (placeholder)
-         */
+        //Maneja comentar un post (placeholder)
         handleCommentPost(postId) {
             console.log('Comment post:', postId);
-            // Los comentarios se manejan dentro de PostCard
+            // Los comentarios se manejan en PostCard
         },
 
-        /**
-         * Maneja cuando se agrega un comentario
-         */
+        //Maneja cuando se agrega un comentario
         handleCommentAdded(data) {
             console.log('Comment added to post:', data);
-            // Podríamos actualizar el contador de comentarios aquí si es necesario
         },
 
-        /**
-         * Maneja cuando se elimina un comentario
-         */
+        //Maneja cuando se elimina un comentario
         handleCommentDeleted(data) {
             console.log('Comment deleted from post:', data);
-            // Podríamos actualizar el contador de comentarios aquí si es necesario
         },
 
-        /**
-         * Maneja compartir un post (placeholder)
-         */
+        //Maneja compartir un post (placeholder)
         handleSharePost(post) {
             console.log('Share post:', post);
-            // TODO: Implementar compartir
+            // agregar compartir?
         },
 
-        /**
-         * Configura la suscripción en tiempo real
-         */
+        //Configura la suscripción en tiempo real
         setupRealtime() {
             this.realtimeChannel = subscribeToPostsChanges(
                 // onInsert

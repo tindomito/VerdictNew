@@ -1,7 +1,5 @@
-/**
- * Servicios para manejar comentarios en publicaciones
- * Interactúa con la tabla comments de Supabase
- */
+// Servicios para manejar comentarios en publicaciones
+// Interactúa con la tabla comments de Supabase
 import { supabase } from './supabase.js';
 
 /**

@@ -160,9 +160,7 @@ const chatContainer = ref(null);
 // Subscription para mensajes en tiempo real
 let unsubscribe = null;
 
-/**
- * Obtiene las iniciales de un usuario
- */
+//Obtiene las iniciales de un usuario
 function getUserInitials(name) {
   if (!name) return 'U';
   return name
@@ -173,9 +171,7 @@ function getUserInitials(name) {
     .slice(0, 2);
 }
 
-/**
- * Formatea la fecha de un mensaje
- */
+//Formatea la fecha de un mensaje
 function formatDate(dateString) {
   const date = new Date(dateString);
   const now = new Date();
@@ -196,9 +192,7 @@ function formatDate(dateString) {
   }).format(date);
 }
 
-/**
- * Scrollea al final del chat
- */
+//Scrollea al final del chat
 async function scrollToBottom() {
   await nextTick();
   if (chatContainer.value) {
@@ -206,9 +200,7 @@ async function scrollToBottom() {
   }
 }
 
-/**
- * Carga el perfil del otro usuario
- */
+//Carga el perfil del otro usuario
 async function loadOtherUserProfile() {
   const identifier = route.params.displayName;
   
@@ -231,9 +223,7 @@ async function loadOtherUserProfile() {
   }
 }
 
-/**
- * Carga los mensajes del chat
- */
+//Carga los mensajes del chat
 async function loadMessages() {
   if (!otherUser.value) return;
   
@@ -261,9 +251,7 @@ async function loadMessages() {
   }
 }
 
-/**
- * Suscribe a mensajes en tiempo real
- */
+//Suscribe a mensajes en tiempo real
 async function subscribeToMessages() {
   if (!otherUser.value) return;
   
@@ -285,9 +273,7 @@ async function subscribeToMessages() {
   }
 }
 
-/**
- * Envía un mensaje
- */
+//Envía un mensaje
 async function handleSendMessage() {
   if (!newMessage.value.trim() || sending.value || !otherUser.value) return;
   
@@ -308,7 +294,6 @@ async function handleSendMessage() {
       return;
     }
     
-    // OPTIMISTIC UPDATE: Agregar el mensaje inmediatamente
     if (message) {
       messages.value.push({
         id: message.id,
@@ -329,9 +314,7 @@ async function handleSendMessage() {
   }
 }
 
-/**
- * Inicializa el chat
- */
+//Inicializa el chat
 async function initializeChat() {
   await loadOtherUserProfile();
   

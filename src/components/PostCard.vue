@@ -34,7 +34,7 @@
                     </div>
                 </div>
 
-                <!-- Botón de opciones (solo si es el autor) -->
+                <!-- Boton de opciones (solo si es el autor) -->
                 <div v-if="isOwnPost" class="relative">
                     <button
                         @click="showOptions = !showOptions"
@@ -85,7 +85,7 @@
 
             <!-- Acciones del post -->
             <div class="flex items-center space-x-6 pt-4 border-t border-gray-200">
-                <!-- Likes (placeholder) -->
+                <!-- Likes (cambiar) -->
                 <button
                     @click="handleLike"
                     class="flex items-center space-x-2 text-gray-500 hover:text-indigo-600 transition-colors"
@@ -96,7 +96,7 @@
                     <span class="text-sm font-medium">{{ post.likes_count || 0 }}</span>
                 </button>
 
-                <!-- Comentarios (placeholder) -->
+                <!-- Comentarios (cambiar) -->
                 <button
                     @click="handleComment"
                     class="flex items-center space-x-2 text-gray-500 hover:text-indigo-600 transition-colors"
@@ -107,7 +107,7 @@
                     <span class="text-sm font-medium">{{ post.comments_count || 0 }}</span>
                 </button>
 
-                <!-- Compartir (placeholder) -->
+                <!-- Compartir (cambiar) -->
                 <button
                     @click="handleShare"
                     class="flex items-center space-x-2 text-gray-500 hover:text-indigo-600 transition-colors"
@@ -205,16 +205,12 @@ export default {
     },
     
     computed: {
-        /**
-         * Si el post pertenece al usuario actual
-         */
+        // Si el post pertenece al usuario actual
         isOwnPost() {
             return this.post.user_id === this.currentUserId;
         },
         
-        /**
-         * Iniciales del autor
-         */
+        // Iniciales del autor
         authorInitials() {
             if (this.post.display_name) {
                 return this.post.display_name
@@ -227,9 +223,7 @@ export default {
             return 'U';
         },
         
-        /**
-         * Fecha formateada
-         */
+        // Fecha formateada
         formattedDate() {
             if (!this.post.created_at) return '';
             

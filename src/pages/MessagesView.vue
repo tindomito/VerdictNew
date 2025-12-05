@@ -120,9 +120,7 @@ function getUserInitials(name) {
     .slice(0, 2);
 }
 
-/**
- * Formatea la fecha de un mensaje
- */
+//Formatea la fecha de un mensaje
 function formatDate(dateString) {
   if (!dateString) return '';
   
@@ -147,9 +145,7 @@ function formatDate(dateString) {
   }).format(date);
 }
 
-/**
- * Carga las conversaciones del usuario
- */
+//Carga las conversaciones del usuario
 async function loadConversations() {
   loading.value = true;
   error.value = null;
@@ -172,9 +168,7 @@ async function loadConversations() {
   }
 }
 
-/**
- * Abre el chat con un usuario
- */
+//Abre el chat con un usuario
 function openChat(conversation) {
   const slug = conversation.otherUserDisplayName 
     ? createSlugFromDisplayName(conversation.otherUserDisplayName)

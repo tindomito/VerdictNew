@@ -1,7 +1,5 @@
-/**
- * Servicios de autenticación usando Supabase Auth
- * Maneja registro, login, logout y gestión del estado del usuario
- */
+// Servicios de autenticación usando Supabase Auth
+// Maneja registro, login, logout y gestión del estado del usuario
 import { supabase } from './supabase.js';
 
 /**

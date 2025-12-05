@@ -92,7 +92,7 @@
                     </button>
                 </div>
 
-                <!-- Selector de archivo -->
+                <!-- selector de archivo -->
                 <div v-else class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-indigo-400 transition-colors">
                     <input
                         ref="fileInput"
@@ -118,18 +118,18 @@
                     </p>
                 </div>
 
-                <!-- Error de imagen -->
+                <!-- error de imagen -->
                 <p v-if="imageError" class="mt-2 text-sm text-red-600">
                     {{ imageError }}
                 </p>
             </div>
 
-            <!-- Mensaje de error -->
+            <!-- msj de error -->
             <div v-if="error" class="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
                 <p class="text-sm text-red-700">{{ error }}</p>
             </div>
 
-            <!-- Botones -->
+            <!-- botones -->
             <div class="flex justify-end space-x-3">
                 <button
                     v-if="showCancel"
@@ -194,7 +194,7 @@ export default {
     },
     computed: {
         /**
-         * Valida que el formulario esté completo
+         valida que el formulario este completo
          */
         isFormValid() {
             return (
@@ -207,7 +207,7 @@ export default {
     },
     methods: {
         /**
-         * Maneja la selección de imagen
+         seleccion de imagen
          */
         handleImageSelect(event) {
             const file = event.target.files[0];
@@ -222,7 +222,7 @@ export default {
                 return;
             }
 
-            // Guardar archivo y crear vista previa
+            // savefile y crear vista previa
             this.selectedImage = file;
             this.imageError = null;
 
@@ -234,7 +234,7 @@ export default {
         },
 
         /**
-         * Elimina la imagen seleccionada
+          elimina imagen
          */
         removeImage() {
             this.selectedImage = null;
@@ -246,7 +246,7 @@ export default {
         },
 
         /**
-         * Maneja el envío del formulario
+         envio de formulario
          */
         async handleSubmit() {
             if (!this.isFormValid) return;
@@ -257,7 +257,7 @@ export default {
             try {
                 let imageUrl = null;
 
-                // Subir imagen si existe
+                // subir imagen solo si existe
                 if (this.selectedImage) {
                     const { url, error } = await uploadPostImage(this.selectedImage, this.currentUserId);
                     if (error) {
@@ -268,7 +268,7 @@ export default {
                     imageUrl = url;
                 }
 
-                // Crear post
+                // crear post
                 const postData = {
                     title: this.form.title.trim(),
                     content: this.form.content.trim(),
@@ -286,10 +286,10 @@ export default {
                     return;
                 }
 
-                // Emitir evento de creación exitosa
+                // emitir evento de creación exitosa
                 this.$emit('created', post);
 
-                // Limpiar formulario
+                // limpiar formulario
                 this.form = {
                     title: '',
                     content: '',
@@ -297,7 +297,7 @@ export default {
                 };
                 this.removeImage();
 
-                // Mostrar mensaje de éxito
+                // mostrar success mensaje
                 this.showSuccessMessage();
             } catch (error) {
                 console.error('Error creating post:', error);
@@ -307,9 +307,7 @@ export default {
             }
         },
 
-        /**
-         * Maneja la cancelación
-         */
+
         handleCancel() {
             if (this.form.title || this.form.content) {
                 if (confirm('¿Descartar los cambios?')) {
@@ -325,11 +323,9 @@ export default {
             }
         },
 
-        /**
-         * Muestra mensaje de éxito temporal
-         */
+
         showSuccessMessage() {
-            // Podrías agregar un toast/notificación aquí
+
             console.log('Post creado exitosamente');
         }
     }

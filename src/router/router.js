@@ -11,65 +11,65 @@ import Messages from '../pages/MessagesView.vue';
 
 // Definimos la lista de rutas de nuestra aplicación
 const routes = [
-    { 
-        path: '/', 
+    {
+        path: '/',
         component: Home,
         name: 'Home'
     },
-    { 
-        path: '/chat', 
+    {
+        path: '/chat',
         component: PublicChat,
         name: 'PublicChat'
     },
-    { 
-        path: '/login', 
+    {
+        path: '/login',
         component: Login,
         name: 'Login'
     },
-    { 
-        path: '/register', 
+    {
+        path: '/register',
         component: Register,
         name: 'Register'
     },
-    { 
-        path: '/profile/:id?', 
+    {
+        path: '/profile/:id?',
         component: Profile,
         name: 'Profile',
         props: true
     },
-    { 
-        path: '/settings', 
+    {
+        path: '/settings',
         component: Settings,
         name: 'Settings',
-        meta: { 
-            requiresAuth: true 
+        meta: {
+            requiresAuth: true
         }
     },
-    { 
-        path: '/feed', 
-        component: Feed, 
+    {
+        path: '/feed',
+        component: Feed,
         name: 'Feed',
-        meta: { 
-            requiresAuth: true 
+        meta: {
+            requiresAuth: true
         }
     },
-    { 
-        path: '/chat/:displayName', 
+    {
+        path: '/chat/:displayName',
         component: PrivateChat,
         name: 'PrivateChat',
         props: true,
-        meta: { 
-            requiresAuth: true 
+        meta: {
+            requiresAuth: true
         }
     },
-    { 
-    path: '/messages', 
-    component: Messages,
-    name: 'Messages',
-    meta: { 
-        requiresAuth: true 
+    {
+        path: '/messages',
+        component: Messages,
+        name: 'Messages',
+        meta: {
+            requiresAuth: true
+        }
     }
-}
 ];
 
 const router = createRouter({
@@ -77,19 +77,17 @@ const router = createRouter({
     history: createWebHistory(),
 });
 
-/**
- * Guard global para rutas que requieren autenticación
- */
+// Guard global para rutas que requieren autenticación
 router.beforeEach(async (to, from, next) => {
     console.log('Router guard:', { to: to.path, requiresAuth: to.meta.requiresAuth });
-    
+
     // Importar composable de auth
     const { useAuth } = await import('../composables/useAuth.js');
     const { isAuthenticated, user, loading, initialize } = useAuth();
-    
+
     // Asegurar que la autenticación esté inicializada
     await initialize();
-    
+
     // Verificar si la ruta requiere autenticación
     if (to.meta.requiresAuth) {
         console.log('Auth check for protected route:', {
@@ -97,7 +95,7 @@ router.beforeEach(async (to, from, next) => {
             user: user.value,
             loading: loading.value
         });
-        
+
         if (!isAuthenticated.value) {
             console.log('User not authenticated, redirecting to login');
             // Redireccionar al login si no está autenticado
@@ -108,16 +106,16 @@ router.beforeEach(async (to, from, next) => {
             return;
         }
     }
-    
+
     // Si va a /profile sin ID y está autenticado, redirigir a su propio perfil
     if (to.name === 'Profile' && !to.params.id) {
         const { userId } = useAuth();
-        
+
         console.log('Profile redirect check:', {
             isAuthenticated: isAuthenticated.value,
             userId: userId.value
         });
-        
+
         if (isAuthenticated.value && userId.value) {
             console.log('Redirecting to own profile:', userId.value);
             next({
@@ -127,7 +125,7 @@ router.beforeEach(async (to, from, next) => {
             return;
         }
     }
-    
+
     next();
 });
 

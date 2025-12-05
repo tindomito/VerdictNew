@@ -1,14 +1,14 @@
 /**
- * Composable para manejar el estado de perfiles
- * Proporciona reactividad y métodos para trabajar con perfiles
+  Composable para manejar el estado de perfiles
+  Proporciona reactividad y métodos para trabajar con perfiles
  */
 import { ref, computed } from 'vue';
-import { 
-    getCurrentProfile, 
-    updateProfile, 
+import {
+    getCurrentProfile,
+    updateProfile,
     getProfile,
     RANGOS,
-    getRangoIndex 
+    getRangoIndex
 } from '../services/profiles.js';
 
 // Estado global reactivo para el perfil actual
@@ -28,7 +28,7 @@ export function useProfile() {
     const rango = computed(() => currentProfile.value?.rango || 'Novato');
     const isPro = computed(() => currentProfile.value?.pro || false);
     const profileId = computed(() => currentProfile.value?.id || null);
-    
+
     // Computed para información del rango
     const rangoIndex = computed(() => getRangoIndex(rango.value));
     const rangoProgress = computed(() => {
@@ -37,19 +37,19 @@ export function useProfile() {
     });
 
     /**
-     * Carga el perfil del usuario actual
+      Carga el perfil del usuario actual
      */
     async function loadCurrentProfile() {
         profileLoading.value = true;
         try {
             const { profile, error } = await getCurrentProfile();
-            
+
             if (error) {
                 console.error('Error loading profile:', error);
                 currentProfile.value = null;
                 return { success: false, error };
             }
-            
+
             currentProfile.value = profile;
             return { success: true, profile };
         } catch (error) {
@@ -69,11 +69,11 @@ export function useProfile() {
         profileLoading.value = true;
         try {
             const { profile, error } = await updateProfile(updates);
-            
+
             if (error) {
                 return { success: false, error };
             }
-            
+
             // Actualizar el estado local
             currentProfile.value = profile;
             return { success: true, profile };
@@ -85,15 +85,13 @@ export function useProfile() {
         }
     }
 
-    /**
-     * Limpia el perfil actual (al hacer logout)
-     */
+    //limpia el perfil actual (al hacer logout)
     function clearCurrentProfile() {
         currentProfile.value = null;
     }
 
     /**
-     * Refresca el perfil actual desde la base de datos
+      Refresca el perfil actual desde la base de datos
      */
     async function refreshCurrentProfile() {
         return await loadCurrentProfile();
@@ -104,7 +102,7 @@ export function useProfile() {
         currentProfile: computed(() => currentProfile.value),
         profileLoading: computed(() => profileLoading.value),
         hasProfile,
-        
+
         // Datos del perfil
         displayName,
         bio,
@@ -112,12 +110,12 @@ export function useProfile() {
         rango,
         isPro,
         profileId,
-        
-        // Información del rango
+
+        // Informacion del rango
         rangoIndex,
         rangoProgress,
-        
-        // Métodos
+
+        // Metodos
         loadCurrentProfile,
         updateCurrentProfile,
         clearCurrentProfile,
@@ -139,21 +137,21 @@ export function useExternalProfile() {
      */
     async function loadProfile(userId) {
         if (!userId) return { success: false, error: { message: 'ID de usuario requerido' } };
-        
+
         // Si ya está cargando, no hacer otra petición
         if (loading.value.has(userId)) {
             return { success: false, error: { message: 'Perfil ya cargando' } };
         }
 
         loading.value.add(userId);
-        
+
         try {
             const { profile, error } = await getProfile(userId);
-            
+
             if (error) {
                 return { success: false, error };
             }
-            
+
             // Guardar en cache
             profiles.value.set(userId, profile);
             return { success: true, profile };
@@ -194,7 +192,7 @@ export function useExternalProfile() {
     return {
         // Estado
         profiles: computed(() => profiles.value),
-        
+
         // Métodos
         loadProfile,
         getCachedProfile,

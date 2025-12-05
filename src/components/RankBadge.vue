@@ -41,31 +41,23 @@ import { getRangoIndex, RANGOS } from '../services/profiles.js';
 export default {
     name: 'RankBadge',
     props: {
-        /**
-         * Rango del usuario
-         */
+        // Rango del usuario
         rango: {
             type: String,
             required: true,
             validator: (value) => RANGOS.includes(value)
         },
-        /**
-         * Si el usuario tiene suscripción PRO
-         */
+        // Si el usuario tiene suscripcion PRO
         isPro: {
             type: Boolean,
             default: false
         },
-        /**
-         * Mostrar barra de progreso del rango
-         */
+        // Mostrar barra de progreso del rango
         showProgress: {
             type: Boolean,
             default: false
         },
-        /**
-         * Tamaño del badge
-         */
+        // Tamaño del badge
         size: {
             type: String,
             default: 'normal',
@@ -73,30 +65,22 @@ export default {
         }
     },
     computed: {
-        /**
-         * Índice numérico del rango (0-9)
-         */
+        // Índice numérico del rango (0-9)
         rankIndex() {
             return getRangoIndex(this.rango);
         },
         
-        /**
-         * Número total de rangos
-         */
+        // Número total de rangos
         totalRanks() {
             return RANGOS.length;
         },
         
-        /**
-         * Porcentaje de progreso del rango
-         */
+        // Porcentaje de progreso del rango
         progress() {
             return ((this.rankIndex + 1) / this.totalRanks) * 100;
         },
         
-        /**
-         * Icono asociado al rango
-         */
+        // Icono asociado al rango
         rankIcon() {
             const icons = {
                 'Novato': '🥋',
@@ -113,9 +97,7 @@ export default {
             return icons[this.rango] || '🥋';
         },
         
-        /**
-         * Clases CSS para colorear el badge según el rango
-         */
+        // Clases CSS para colorear el badge según el rango
         rankColorClass() {
             const colorClasses = {
                 'Novato': 'bg-gray-100 text-gray-800',
@@ -132,9 +114,7 @@ export default {
             return colorClasses[this.rango] || 'bg-gray-100 text-gray-800';
         },
         
-        /**
-         * Clases para el icono
-         */
+        // Clases para el icono
         iconClass() {
             return this.rango === 'Hall of Fame' ? 'text-yellow-200' : '';
         }
