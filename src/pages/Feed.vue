@@ -117,7 +117,7 @@
 import CreatePost from '../components/CreatePost.vue';
 import EditPost from '../components/EditPost.vue';
 import PostCard from '../components/PostCard.vue';
-import { getPosts, deletePost, subscribeToPostsChanges, POST_CATEGORIES } from '../services/posts.js';
+import { getPosts, getPost, deletePost, subscribeToPostsChanges, POST_CATEGORIES } from '../services/posts.js';
 
 export default {
     name: 'Feed',
@@ -193,8 +193,26 @@ export default {
         },
 
         //Maneja la creación de un nuevo post
-        handlePostCreated(post) {
-            console.log('Post created:', post);
+        async handlePostCreated(createdPost) {
+            console.log('Post created:', createdPost);
+
+            // Obtener el post completo con datos del usuario desde la vista posts_with_users
+            const { post, error } = await getPost(createdPost.id);
+
+            if (error || !post) {
+                console.error('Error al obtener post completo:', error);
+                return;
+            }
+
+            // Solo agregar si estamos en "todas las categorías" o coincide la categoría
+            if (this.selectedCategory === 'all' || post.category === this.selectedCategory) {
+                // Verificar si el post ya existe en el array (por la suscripción en tiempo real)
+                const existingIndex = this.posts.findIndex(p => p.id === post.id);
+                if (existingIndex === -1) {
+                    // Agregar al principio del array
+                    this.posts.unshift(post);
+                }
+            }
         },
 
         //Maneja la edición de un post
