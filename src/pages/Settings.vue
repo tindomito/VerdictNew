@@ -45,25 +45,52 @@
                                 Foto de Perfil
                             </label>
                             <div class="flex items-center space-x-6">
-                                <div class="w-20 h-20 rounded-full bg-gradient-to-r from-indigo-500 to-purple-600 flex items-center justify-center text-white font-bold text-xl">
-                                    <img 
-                                        v-if="form.avatar_url" 
-                                        :src="form.avatar_url" 
+                                <div class="w-20 h-20 rounded-full bg-gradient-to-r from-indigo-500 to-purple-600 flex items-center justify-center text-white font-bold text-xl overflow-hidden">
+                                    <img
+                                        v-if="avatarPreview || form.avatar_url"
+                                        :src="avatarPreview || form.avatar_url"
                                         :alt="'Avatar de ' + form.display_name"
-                                        class="w-full h-full rounded-full object-cover"
+                                        class="w-full h-full object-cover"
                                         @error="handleImageError"
                                     />
                                     <span v-else>{{ avatarInitials }}</span>
                                 </div>
-                                <div>
-                                    <input
-                                        type="url"
-                                        v-model="form.avatar_url"
-                                        placeholder="https://ejemplo.com/tu-avatar.jpg"
-                                        class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-                                    />
+                                <div class="flex-1">
+                                    <div class="flex items-center space-x-2">
+                                        <label
+                                            for="avatar-upload"
+                                            class="cursor-pointer inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500"
+                                        >
+                                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                            </svg>
+                                            Seleccionar Imagen
+                                            <input
+                                                id="avatar-upload"
+                                                type="file"
+                                                accept="image/jpeg,image/jpg,image/png,image/gif,image/webp"
+                                                @change="handleAvatarChange"
+                                                :disabled="saveLoading"
+                                                class="sr-only"
+                                            />
+                                        </label>
+                                        <button
+                                            v-if="avatarPreview || form.avatar_url"
+                                            type="button"
+                                            @click="removeAvatar"
+                                            :disabled="saveLoading"
+                                            class="inline-flex items-center px-3 py-2 border border-red-300 rounded-md shadow-sm text-sm font-medium text-red-700 bg-white hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 disabled:opacity-50"
+                                        >
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                            </svg>
+                                        </button>
+                                    </div>
                                     <p class="mt-1 text-xs text-gray-500">
-                                        URL de tu imagen de perfil (opcional)
+                                        JPG, PNG, GIF o WebP. Máximo 5MB.
+                                    </p>
+                                    <p v-if="avatarError" class="mt-1 text-xs text-red-600">
+                                        {{ avatarError }}
                                     </p>
                                 </div>
                             </div>
@@ -296,6 +323,8 @@
 import { useAuth } from '../composables/useAuth.js';
 import { useProfile } from '../composables/useProfile.js';
 import { logout } from '../services/auth.js';
+import { uploadProfileAvatar, validateImageFile, deleteProfileAvatar } from '../services/storage.js';
+import { getCurrentUser } from '../services/auth.js';
 import AppH1 from '../components/AppH1.vue';
 import RankBadge from '../components/RankBadge.vue';
 
@@ -334,6 +363,9 @@ export default {
                 bio: '',
                 avatar_url: ''
             },
+            avatarFile: null, // Archivo de imagen seleccionado
+            avatarPreview: null, // URL de vista previa de la imagen
+            avatarError: null, // Error de validación de avatar
             passwordForm: {
                 newPassword: '',
                 confirmPassword: ''
@@ -400,44 +432,111 @@ export default {
             this.errorMessage = null;
         },
         
+        // Maneja el cambio de archivo de avatar
+        handleAvatarChange(event) {
+            this.avatarError = null;
+            const file = event.target.files[0];
+
+            if (!file) {
+                return;
+            }
+
+            // Validar archivo
+            const validation = validateImageFile(file);
+            if (!validation.valid) {
+                this.avatarError = validation.error;
+                event.target.value = ''; // Limpiar input
+                return;
+            }
+
+            // Guardar archivo
+            this.avatarFile = file;
+
+            // Crear vista previa
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                this.avatarPreview = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        },
+
+        // Elimina el avatar seleccionado
+        removeAvatar() {
+            this.avatarFile = null;
+            this.avatarPreview = null;
+            this.avatarError = null;
+            this.form.avatar_url = '';
+
+            // Limpiar input de archivo
+            const fileInput = document.getElementById('avatar-upload');
+            if (fileInput) {
+                fileInput.value = '';
+            }
+        },
+
         // Maneja la actualización del perfil
         async handleUpdateProfile() {
             this.clearMessages();
+            this.avatarError = null;
             this.saveLoading = true;
-            
+
             try {
                 // Validaciones
                 if (this.form.display_name.trim().length === 0) {
                     this.errorMessage = 'El nombre de usuario es requerido';
                     return;
                 }
-                
+
                 if (this.bioCharCount > 500) {
                     this.errorMessage = 'La biografía no puede exceder 500 caracteres';
                     return;
                 }
-                
+
+                // Subir avatar si se seleccionó uno nuevo
+                let avatarUrl = this.form.avatar_url;
+                if (this.avatarFile) {
+                    const user = await getCurrentUser();
+                    if (!user) {
+                        this.errorMessage = 'No se pudo obtener el usuario actual';
+                        return;
+                    }
+
+                    const { url, error } = await uploadProfileAvatar(this.avatarFile, user.id);
+
+                    if (error) {
+                        this.avatarError = error.message || 'Error al subir la imagen';
+                        return;
+                    }
+
+                    avatarUrl = url;
+                }
+
                 // Preparar datos para actualizar
                 const updates = {
                     display_name: this.form.display_name.trim(),
                     bio: this.form.bio.trim(),
-                    avatar_url: this.form.avatar_url.trim() || null
+                    avatar_url: avatarUrl || null
                 };
-                
+
                 const { success, error } = await this.updateCurrentProfile(updates);
-                
+
                 if (!success) {
                     this.errorMessage = error?.message || 'Error al actualizar el perfil';
                     return;
                 }
-                
+
+                // Limpiar datos de archivo después de guardar exitosamente
+                this.avatarFile = null;
+                this.avatarPreview = null;
+                this.form.avatar_url = avatarUrl || '';
+
                 this.successMessage = 'Perfil actualizado correctamente';
-                
+
                 // Limpiar mensaje de éxito después de 3 segundos
                 setTimeout(() => {
                     this.successMessage = null;
                 }, 3000);
-                
+
             } catch (error) {
                 console.error('Error updating profile:', error);
                 this.errorMessage = 'Error inesperado al actualizar el perfil';
