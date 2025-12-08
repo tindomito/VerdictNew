@@ -7,18 +7,23 @@
     </main>
 
     <MyFooter/>
+
+    <!-- Sistema de notificaciones toast -->
+    <ToastNotification />
 </template>
 
 <script>
 import DarkNavbar from './components/darkNavbar.vue';
 import MyFooter from './components/myFooter.vue';
+import ToastNotification from './components/ToastNotification.vue';
 import { useAuth } from './composables/useAuth.js';
 
 export default {
     name: 'App',
-    components: { 
+    components: {
         DarkNavbar,
         MyFooter,
+        ToastNotification,
     },
     setup() {
         // Inicializar el sistema de autenticación

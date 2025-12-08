@@ -142,11 +142,13 @@
 import { ref, onMounted, onUnmounted, nextTick, computed } from 'vue';
 import { useRoute } from 'vue-router';
 import { useAuth } from '../composables/useAuth.js';
+import { useToast } from '../composables/useToast.js';
 import { getProfileByIdentifier } from '../services/profiles.js';
 import { getPrivateMessages, sendPrivateMessage, subscribeToPrivateMessages } from '../services/private-chat.js';
 
 const route = useRoute();
 const { userId: currentUserId, userDisplayName } = useAuth();
+const { success: toastSuccess, error: toastError } = useToast();
 
 // Estados
 const otherUser = ref(null);
@@ -290,10 +292,11 @@ async function handleSendMessage() {
     
     if (error) {
       console.error('Error sending message:', error);
+      toastError('Error al enviar el mensaje');
       newMessage.value = messageContent; // Restaurar mensaje
       return;
     }
-    
+
     if (message) {
       messages.value.push({
         id: message.id,
@@ -303,11 +306,13 @@ async function handleSendMessage() {
         created_at: new Date().toISOString(),
         read: false
       });
-      
+
+      toastSuccess('¡Mensaje enviado exitosamente!');
       await scrollToBottom();
     }
   } catch (error) {
     console.error('Unexpected error sending message:', error);
+    toastError('Error inesperado al enviar el mensaje');
     newMessage.value = messageContent;
   } finally {
     sending.value = false;

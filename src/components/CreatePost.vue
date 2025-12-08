@@ -163,6 +163,7 @@
 import { POST_CATEGORIES, createPost } from '../services/posts.js';
 import { uploadPostImage, validateImageFile } from '../services/storage.js';
 import { useAuth } from '../composables/useAuth.js';
+import { useToast } from '../composables/useToast.js';
 
 export default {
     name: 'CreatePost',
@@ -175,7 +176,8 @@ export default {
     emits: ['created', 'cancel'],
     setup() {
         const { userId } = useAuth();
-        return { currentUserId: userId };
+        const { success, error: showError } = useToast();
+        return { currentUserId: userId, toastSuccess: success, toastError: showError };
     },
     data() {
         return {
@@ -283,6 +285,7 @@ export default {
 
                 if (error) {
                     this.error = error.message || 'Error al crear la publicación';
+                    this.toastError(error.message || 'Error al crear la publicación');
                     return;
                 }
 
@@ -297,16 +300,16 @@ export default {
                 };
                 this.removeImage();
 
-                // mostrar success mensaje
-                this.showSuccessMessage();
+                // mostrar notificación de éxito
+                this.toastSuccess('¡Publicación creada exitosamente!');
             } catch (error) {
                 console.error('Error creating post:', error);
                 this.error = 'Error inesperado al crear la publicación';
+                this.toastError('Error inesperado al crear la publicación');
             } finally {
                 this.loading = false;
             }
         },
-
 
         handleCancel() {
             if (this.form.title || this.form.content) {
@@ -321,12 +324,6 @@ export default {
             } else {
                 this.$emit('cancel');
             }
-        },
-
-
-        showSuccessMessage() {
-
-            console.log('Post creado exitosamente');
         }
     }
 };

@@ -322,6 +322,7 @@
 <script>
 import { useAuth } from '../composables/useAuth.js';
 import { useProfile } from '../composables/useProfile.js';
+import { useToast } from '../composables/useToast.js';
 import { logout } from '../services/auth.js';
 import { uploadProfileAvatar, validateImageFile, deleteProfileAvatar } from '../services/storage.js';
 import { getCurrentUser } from '../services/auth.js';
@@ -336,20 +337,23 @@ export default {
     },
     setup() {
         const { userEmail, clearUser } = useAuth();
-        const { 
-            currentProfile, 
-            loadCurrentProfile, 
+        const {
+            currentProfile,
+            loadCurrentProfile,
             updateCurrentProfile,
-            profileLoading 
+            profileLoading
         } = useProfile();
-        
+        const { success, error: showError } = useToast();
+
         return {
             userEmail,
             currentProfile,
             loadCurrentProfile,
             updateCurrentProfile,
             profileLoading,
-            clearUser
+            clearUser,
+            toastSuccess: success,
+            toastError: showError
         };
     },
     data() {
@@ -522,6 +526,7 @@ export default {
 
                 if (!success) {
                     this.errorMessage = error?.message || 'Error al actualizar el perfil';
+                    this.toastError(error?.message || 'Error al actualizar el perfil');
                     return;
                 }
 
@@ -531,6 +536,7 @@ export default {
                 this.form.avatar_url = avatarUrl || '';
 
                 this.successMessage = 'Perfil actualizado correctamente';
+                this.toastSuccess('¡Perfil actualizado correctamente!');
 
                 // Limpiar mensaje de éxito después de 3 segundos
                 setTimeout(() => {
@@ -540,6 +546,7 @@ export default {
             } catch (error) {
                 console.error('Error updating profile:', error);
                 this.errorMessage = 'Error inesperado al actualizar el perfil';
+                this.toastError('Error inesperado al actualizar el perfil');
             } finally {
                 this.saveLoading = false;
             }
@@ -580,26 +587,29 @@ export default {
                 
                 if (error) {
                     this.passwordError = error.message || 'Error al cambiar la contraseña';
+                    this.toastError(error.message || 'Error al cambiar la contraseña');
                     return;
                 }
-                
+
                 // exito
                 this.passwordSuccess = 'Contraseña cambiada correctamente';
-                
+                this.toastSuccess('¡Contraseña cambiada correctamente!');
+
                 // Limpiar formulario
                 this.passwordForm = {
                     newPassword: '',
                     confirmPassword: ''
                 };
-                
+
                 // Limpiar mensaje de éxito después de 5 segundos
                 setTimeout(() => {
                     this.passwordSuccess = null;
                 }, 5000);
-                
+
             } catch (error) {
                 console.error('Error changing password:', error);
                 this.passwordError = 'Error inesperado al cambiar la contraseña';
+                this.toastError('Error inesperado al cambiar la contraseña');
             } finally {
                 this.passwordLoading = false;
             }

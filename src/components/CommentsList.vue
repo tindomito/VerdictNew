@@ -90,6 +90,7 @@ import {
     subscribeToCommentsChanges
 } from '../services/comments.js';
 import { useAuth } from '../composables/useAuth.js';
+import { useToast } from '../composables/useToast.js';
 
 export default {
     name: 'CommentsList',
@@ -105,7 +106,8 @@ export default {
     emits: ['comment-added', 'comment-deleted'],
     setup() {
         const { userId } = useAuth();
-        return { currentUserId: userId };
+        const { success, error: showError } = useToast();
+        return { currentUserId: userId, toastSuccess: success, toastError: showError };
     },
     data() {
         return {
@@ -196,17 +198,21 @@ export default {
 
                 if (error) {
                     this.error = error.message || 'Error al crear comentario';
+                    this.toastError(error.message || 'Error al crear comentario');
                     return;
                 }
 
                 if (comment) {
                     this.newCommentContent = '';
                     this.$emit('comment-added', comment);
+                    // Notificación de éxito
+                    this.toastSuccess('¡Comentario publicado exitosamente!');
                     // El comentario se agregará automáticamente por Realtime
                 }
             } catch (error) {
                 console.error('Error creating comment:', error);
                 this.error = 'Error inesperado al crear comentario';
+                this.toastError('Error inesperado al crear comentario');
             } finally {
                 this.isSubmitting = false;
             }
@@ -229,16 +235,19 @@ export default {
 
                 if (error) {
                     this.error = 'Error al eliminar comentario';
+                    this.toastError('Error al eliminar comentario');
                     return;
                 }
 
                 if (success) {
                     this.comments = this.comments.filter(c => c.id !== commentId);
                     this.$emit('comment-deleted', commentId);
+                    this.toastSuccess('Comentario eliminado exitosamente');
                 }
             } catch (error) {
                 console.error('Error deleting comment:', error);
                 this.error = 'Error inesperado al eliminar comentario';
+                this.toastError('Error inesperado al eliminar comentario');
             }
         },
 

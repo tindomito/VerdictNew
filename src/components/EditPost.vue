@@ -162,6 +162,7 @@
 import { POST_CATEGORIES, updatePost } from '../services/posts.js';
 import { uploadPostImage, validateImageFile, deletePostImage } from '../services/storage.js';
 import { useAuth } from '../composables/useAuth.js';
+import { useToast } from '../composables/useToast.js';
 
 export default {
     name: 'EditPost',
@@ -174,7 +175,8 @@ export default {
     emits: ['updated', 'cancel'],
     setup() {
         const { userId } = useAuth();
-        return { currentUserId: userId };
+        const { success, error: showError } = useToast();
+        return { currentUserId: userId, toastSuccess: success, toastError: showError };
     },
     data() {
         return {
@@ -308,14 +310,19 @@ export default {
 
                 if (error) {
                     this.error = error.message || 'Error al actualizar la publicación';
+                    this.toastError(error.message || 'Error al actualizar la publicación');
                     return;
                 }
+
+                // Notificación de éxito
+                this.toastSuccess('¡Publicación actualizada exitosamente!');
 
                 // Emitir evento de actualización exitosa
                 this.$emit('updated', post);
             } catch (error) {
                 console.error('Error updating post:', error);
                 this.error = 'Error inesperado al actualizar la publicación';
+                this.toastError('Error inesperado al actualizar la publicación');
             } finally {
                 this.loading = false;
             }
