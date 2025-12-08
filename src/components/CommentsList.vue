@@ -40,6 +40,7 @@
                 </div>
             </div>
         </div>
+        
 
         <!-- Loading state -->
         <div v-if="loading" class="flex justify-center py-4">
