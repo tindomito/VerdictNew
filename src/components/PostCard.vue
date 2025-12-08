@@ -171,6 +171,86 @@
                 </div>
             </transition>
         </Teleport>
+
+        <!-- Modal de confirmación de eliminación -->
+        <Teleport to="body">
+            <transition
+                enter-active-class="transition ease-out duration-300"
+                enter-from-class="opacity-0"
+                enter-to-class="opacity-100"
+                leave-active-class="transition ease-in duration-200"
+                leave-from-class="opacity-100"
+                leave-to-class="opacity-0"
+            >
+                <div
+                    v-if="showDeleteConfirmation"
+                    class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4"
+                    @click="cancelDelete"
+                >
+                    <transition
+                        enter-active-class="transition ease-out duration-300"
+                        enter-from-class="opacity-0 scale-95"
+                        enter-to-class="opacity-100 scale-100"
+                        leave-active-class="transition ease-in duration-200"
+                        leave-from-class="opacity-100 scale-100"
+                        leave-to-class="opacity-0 scale-95"
+                    >
+                        <div
+                            @click.stop
+                            class="bg-white rounded-lg shadow-xl max-w-md w-full p-6"
+                        >
+                            <!-- Icono de advertencia -->
+                            <div class="flex items-center justify-center mb-4">
+                                <div class="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center">
+                                    <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                                    </svg>
+                                </div>
+                            </div>
+
+                            <!-- Título -->
+                            <h3 class="text-lg font-semibold text-gray-900 text-center mb-2">
+                                ¿Eliminar publicación?
+                            </h3>
+
+                            <!-- Descripción con el título del post -->
+                            <div class="mb-6">
+                                <p class="text-sm text-gray-600 text-center mb-3">
+                                    Estás por eliminar la siguiente publicación:
+                                </p>
+                                <div class="bg-gray-50 rounded-lg p-3 border border-gray-200">
+                                    <p class="text-sm font-medium text-gray-900 line-clamp-2">
+                                        {{ post.title }}
+                                    </p>
+                                    <p class="text-xs text-gray-500 mt-1">
+                                        {{ getCategoryIcon(post.category) }} {{ getCategoryName(post.category) }}
+                                    </p>
+                                </div>
+                                <p class="text-sm text-gray-600 text-center mt-3">
+                                    Esta acción no se puede deshacer.
+                                </p>
+                            </div>
+
+                            <!-- Botones -->
+                            <div class="flex gap-3">
+                                <button
+                                    @click="cancelDelete"
+                                    class="flex-1 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors font-medium"
+                                >
+                                    Cancelar
+                                </button>
+                                <button
+                                    @click="confirmDelete"
+                                    class="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium"
+                                >
+                                    Eliminar
+                                </button>
+                            </div>
+                        </div>
+                    </transition>
+                </div>
+            </transition>
+        </Teleport>
     </article>
 </template>
 
@@ -202,6 +282,7 @@ export default {
             showOptions: false,
             showComments: false,
             showImageModal: false,
+            showDeleteConfirmation: false,
             avatarUrl: this.post.avatar_url,
             postImageUrl: null
         };
@@ -275,9 +356,16 @@ export default {
         
         handleDelete() {
             this.showOptions = false;
-            if (confirm('¿Estás seguro de que quieres eliminar este post?')) {
-                this.$emit('delete', this.post.id);
-            }
+            this.showDeleteConfirmation = true;
+        },
+
+        confirmDelete() {
+            this.showDeleteConfirmation = false;
+            this.$emit('delete', this.post.id);
+        },
+
+        cancelDelete() {
+            this.showDeleteConfirmation = false;
         },
         
         handleLike() {
