@@ -189,7 +189,7 @@
               
               <div v-show="profileMenuOpen" class="absolute right-0 mt-2 w-48 rounded-md bg-gray-800 py-1 shadow-lg ring-1 ring-black ring-opacity-5 z-[100]">
                 <div class="px-4 py-2 text-xs text-gray-400 border-b border-gray-700">
-                  Conectado como<br>
+                  Conectado como<br />
                   <span class="font-medium text-gray-200">{{ userEmail }}</span>
                 </div>
                 <RouterLink 

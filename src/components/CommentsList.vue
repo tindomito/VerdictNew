@@ -1,5 +1,5 @@
 <template>
-    <div class="border-t border-gray-200 pt-4 mt-2">
+    <div class="border-t border-gray-700 pt-4 mt-2">
         <!-- Formulario para nuevo comentario -->
         <div class="mb-4">
             <div class="flex space-x-3">
@@ -16,7 +16,7 @@
                         @keydown.meta.enter="submitComment"
                         placeholder="Escribe un comentario..."
                         rows="2"
-                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent resize-none text-sm"
+                        class="w-full px-3 py-2 bg-gray-700 text-white border border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent resize-none text-sm placeholder-gray-400"
                     ></textarea>
 
                     <!-- Botones de acción -->
@@ -24,7 +24,7 @@
                         <button
                             v-if="newCommentContent.trim()"
                             @click="newCommentContent = ''"
-                            class="px-3 py-1.5 text-xs font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                            class="px-3 py-1.5 text-xs font-medium text-gray-300 bg-gray-700 border border-gray-600 rounded-lg hover:bg-gray-600 transition-colors"
                         >
                             Cancelar
                         </button>
@@ -61,7 +61,7 @@
                 <button
                     @click="loadMoreComments"
                     :disabled="loadingMore"
-                    class="text-xs font-medium text-indigo-600 hover:text-indigo-700 disabled:opacity-50"
+                    class="text-xs font-medium text-indigo-400 hover:text-indigo-300 disabled:opacity-50"
                 >
                     <span v-if="!loadingMore">Cargar más comentarios</span>
                     <span v-else>Cargando...</span>
@@ -71,12 +71,12 @@
 
         <!-- Estado vacío -->
         <div v-else class="text-center py-4">
-            <p class="text-sm text-gray-500">No hay comentarios aún. ¡Sé el primero en comentar!</p>
+            <p class="text-sm text-gray-400">No hay comentarios aún. ¡Sé el primero en comentar!</p>
         </div>
 
         <!-- Error state -->
-        <div v-if="error" class="bg-red-50 border border-red-200 rounded-lg p-3 mt-3">
-            <p class="text-xs text-red-700">{{ error }}</p>
+        <div v-if="error" class="bg-red-900/20 border border-red-700 rounded-lg p-3 mt-3">
+            <p class="text-xs text-red-400">{{ error }}</p>
         </div>
     </div>
 </template>

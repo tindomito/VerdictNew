@@ -16,11 +16,11 @@
 
         <!-- Contenido del comentario -->
         <div class="flex-1 min-w-0">
-            <div class="bg-gray-50 rounded-lg px-3 py-2">
+            <div class="bg-gray-700 rounded-lg px-3 py-2">
                 <div class="flex items-center justify-between mb-1">
                     <RouterLink
                         :to="`/profile/${createSlugFromDisplayName(comment.display_name)}`"
-                        class="font-semibold text-sm text-gray-900 hover:text-indigo-600 transition-colors"
+                        class="font-semibold text-sm text-white hover:text-indigo-400 transition-colors"
                     >
                         {{ comment.display_name || 'Usuario' }}
                     </RouterLink>
@@ -29,23 +29,23 @@
                     <div v-if="isOwnComment" class="relative">
                         <button
                             @click="showOptions = !showOptions"
-                            class="p-1 hover:bg-gray-200 rounded-full transition-colors"
+                            class="p-1 hover:bg-gray-600 rounded-full transition-colors"
                         >
-                            <svg class="w-4 h-4 text-gray-500" fill="currentColor" viewBox="0 0 20 20">
+                            <svg class="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
                                 <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"></path>
                             </svg>
                         </button>
 
-                        <div v-if="showOptions" class="absolute right-0 mt-2 w-32 bg-white rounded-md shadow-lg z-10 border border-gray-200">
+                        <div v-if="showOptions" class="absolute right-0 mt-2 w-32 bg-gray-800 rounded-md shadow-lg z-10 border border-gray-600">
                             <button
                                 @click="handleEdit"
-                                class="block w-full text-left px-3 py-2 text-xs text-gray-700 hover:bg-gray-100"
+                                class="block w-full text-left px-3 py-2 text-xs text-gray-300 hover:bg-gray-700"
                             >
                                 Editar
                             </button>
                             <button
                                 @click="handleDelete"
-                                class="block w-full text-left px-3 py-2 text-xs text-red-600 hover:bg-red-50"
+                                class="block w-full text-left px-3 py-2 text-xs text-red-400 hover:bg-red-900/20"
                             >
                                 Eliminar
                             </button>
@@ -53,14 +53,14 @@
                     </div>
                 </div>
 
-                <p class="text-sm text-gray-700 whitespace-pre-wrap break-words">
+                <p class="text-sm text-gray-300 whitespace-pre-wrap break-words">
                     {{ comment.content }}
                 </p>
             </div>
 
             <!-- Fecha -->
             <div class="mt-1 px-3">
-                <span class="text-xs text-gray-500">{{ formattedDate }}</span>
+                <span class="text-xs text-gray-400">{{ formattedDate }}</span>
             </div>
         </div>
     </div>
