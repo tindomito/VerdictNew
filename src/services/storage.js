@@ -43,12 +43,15 @@ export async function uploadPostImage(file, userId) {
         }
 
         // Obtener URL firmada con expiración de 10 años
+        // Usar fileName directamente ya que es el path que usamos para subir
         const { data: signedUrlData, error: signedUrlError } = await supabase.storage
             .from(BUCKET_NAME)
-            .createSignedUrl(data.path, 60 * 60 * 24 * 365 * 10); // 10 años en segundos
+            .createSignedUrl(fileName, 60 * 60 * 24 * 365 * 10); // 10 años en segundos
 
         if (signedUrlError) {
             console.error('Error creating signed URL:', signedUrlError);
+            console.error('fileName usado:', fileName);
+            console.error('data.path devuelto:', data?.path);
             return { url: null, error: signedUrlError };
         }
 
@@ -185,12 +188,15 @@ export async function uploadProfileAvatar(file, userId) {
         }
 
         // Obtener URL firmada con expiración de 10 años
+        // Usar fileName directamente ya que es el path que usamos para subir
         const { data: signedUrlData, error: signedUrlError } = await supabase.storage
             .from(BUCKET_NAME)
-            .createSignedUrl(data.path, 60 * 60 * 24 * 365 * 10); // 10 años en segundos
+            .createSignedUrl(fileName, 60 * 60 * 24 * 365 * 10); // 10 años en segundos
 
         if (signedUrlError) {
             console.error('Error creating signed URL:', signedUrlError);
+            console.error('fileName usado:', fileName);
+            console.error('data.path devuelto:', data?.path);
             return { url: null, error: signedUrlError };
         }
 
