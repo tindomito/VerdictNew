@@ -3,31 +3,34 @@
         <h2 class="text-xl font-bold text-gray-900 mb-4">Crear Publicación</h2>
         
         <form @submit.prevent="handleSubmit">
-            <!-- Selector de categoría -->
+            
             <div class="mb-4">
                 <label for="category" class="block text-sm font-medium text-gray-700 mb-2">
                     Categoría
                 </label>
-                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                    <button
-                        v-for="category in categories"
-                        :key="category.id"
-                        type="button"
-                        @click="form.category = category.id"
-                        :class="[
-                            'flex items-center justify-center space-x-2 px-3 py-2 rounded-lg border-2 transition-all duration-200',
-                            form.category === category.id
-                                ? 'border-indigo-500 bg-indigo-50 text-indigo-700'
-                                : 'border-gray-200 hover:border-indigo-300 text-gray-700'
-                        ]"
+                <div class="relative">
+                    <select
+                        id="category"
+                        v-model="form.category"
+                        class="block w-full px-4 py-2 pr-8 bg-white border border-gray-300 rounded-lg appearance-none focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-gray-700 cursor-pointer"
                     >
-                        <span>{{ category.icon }}</span>
-                        <span class="text-sm font-medium">{{ category.name }}</span>
-                    </button>
+                        <option :value="null" disabled>Selecciona una categoría...</option>
+                        <option 
+                            v-for="category in categories" 
+                            :key="category.id" 
+                            :value="category.id"
+                        >
+                            {{ category.icon }} {{ category.name }}
+                        </option>
+                    </select>
+                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-gray-700">
+                        <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                            <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/>
+                        </svg>
+                    </div>
                 </div>
             </div>
 
-            <!-- Título -->
             <div class="mb-4">
                 <label for="title" class="block text-sm font-medium text-gray-700 mb-2">
                     Título
@@ -42,95 +45,88 @@
                     placeholder="¿De qué quieres hablar?"
                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
                 />
-                <p class="mt-1 text-xs text-gray-500">
-                    {{ form.title.length }}/200 caracteres
+                <p class="mt-1 text-xs text-gray-500 text-right">
+                    {{ form.title.length }}/200
                 </p>
             </div>
 
-            <!-- Contenido -->
-            <div class="mb-4">
-                <label for="content" class="block text-sm font-medium text-gray-700 mb-2">
-                    Contenido
-                </label>
-                <textarea
-                    id="content"
-                    v-model="form.content"
-                    required
-                    rows="6"
-                    maxlength="5000"
-                    :disabled="loading"
-                    placeholder="Comparte tu análisis, opinión o predicción..."
-                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent resize-none disabled:opacity-50 disabled:cursor-not-allowed"
-                ></textarea>
-                <p class="mt-1 text-xs text-gray-500">
-                    {{ form.content.length }}/5000 caracteres
-                </p>
-            </div>
-
-            <!-- Imagen -->
-            <div class="mb-4">
-                <label class="block text-sm font-medium text-gray-700 mb-2">
-                    Imagen (opcional)
-                </label>
-
-                <!-- Vista previa de imagen -->
-                <div v-if="imagePreview" class="mb-3 relative">
-                    <img
-                        :src="imagePreview"
-                        alt="Vista previa"
-                        class="max-h-64 rounded-lg object-cover"
-                    />
-                    <button
-                        type="button"
-                        @click="removeImage"
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                
+                <div class="flex flex-col">
+                    <label for="content" class="block text-sm font-medium text-gray-700 mb-2">
+                        Contenido
+                    </label>
+                    <textarea
+                        id="content"
+                        v-model="form.content"
+                        required
+                        rows="4" 
+                        maxlength="5000"
                         :disabled="loading"
-                        class="absolute top-2 right-2 p-2 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors disabled:opacity-50"
-                    >
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                        </svg>
-                    </button>
-                </div>
-
-                <!-- selector de archivo -->
-                <div v-else class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-indigo-400 transition-colors">
-                    <input
-                        ref="fileInput"
-                        type="file"
-                        accept="image/jpeg,image/jpg,image/png,image/gif,image/webp"
-                        @change="handleImageSelect"
-                        :disabled="loading"
-                        class="hidden"
-                    />
-                    <button
-                        type="button"
-                        @click="$refs.fileInput.click()"
-                        :disabled="loading"
-                        class="inline-flex items-center space-x-2 text-indigo-600 hover:text-indigo-700 disabled:opacity-50"
-                    >
-                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                        </svg>
-                        <span class="text-sm font-medium">Seleccionar imagen</span>
-                    </button>
-                    <p class="mt-2 text-xs text-gray-500">
-                        JPG, PNG, GIF o WebP (máx. 5MB)
+                        placeholder="Comparte tu análisis..."
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent resize-none disabled:opacity-50 disabled:cursor-not-allowed flex-grow"
+                    ></textarea>
+                    <p class="mt-1 text-xs text-gray-500 text-right">
+                        {{ form.content.length }}/5000
                     </p>
                 </div>
 
-                <!-- error de imagen -->
-                <p v-if="imageError" class="mt-2 text-sm text-red-600">
-                    {{ imageError }}
-                </p>
+                <div class="flex flex-col">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        Imagen (opcional)
+                    </label>
+
+                    <div v-if="imagePreview" class="relative h-full min-h-[120px]">
+                        <img
+                            :src="imagePreview"
+                            alt="Vista previa"
+                            class="w-full h-full rounded-lg object-cover max-h-48 border border-gray-200"
+                        />
+                        <button
+                            type="button"
+                            @click="removeImage"
+                            :disabled="loading"
+                            class="absolute top-2 right-2 p-1.5 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors shadow-sm disabled:opacity-50"
+                        >
+                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
+                    </div>
+
+                    <div v-else class="flex-grow border-2 border-dashed border-gray-300 rounded-lg p-4 flex flex-col items-center justify-center text-center hover:border-indigo-400 transition-colors bg-gray-50 h-full min-h-[120px]">
+                        <input
+                            ref="fileInput"
+                            type="file"
+                            accept="image/jpeg,image/jpg,image/png,image/gif,image/webp"
+                            @change="handleImageSelect"
+                            :disabled="loading"
+                            class="hidden"
+                        />
+                        <button
+                            type="button"
+                            @click="$refs.fileInput.click()"
+                            :disabled="loading"
+                            class="inline-flex flex-col items-center text-indigo-600 hover:text-indigo-700 disabled:opacity-50"
+                        >
+                            <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                            </svg>
+                            <span class="text-xs font-medium">Subir imagen</span>
+                        </button>
+                    </div>
+
+                    <p v-if="imageError" class="mt-1 text-xs text-red-600">
+                        {{ imageError }}
+                    </p>
+                </div>
             </div>
 
-            <!-- msj de error -->
             <div v-if="error" class="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
                 <p class="text-sm text-red-700">{{ error }}</p>
             </div>
 
-            <!-- botones -->
-            <div class="flex justify-end space-x-3">
+            <div class="flex justify-end space-x-3 pt-2 border-t border-gray-100">
                 <button
                     v-if="showCancel"
                     type="button"
