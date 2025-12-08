@@ -7,9 +7,9 @@
                 <div class="flex items-center space-x-3">
                     <RouterLink :to="`/profile/${createSlugFromDisplayName(post.display_name)}`">
                         <div class="w-10 h-10 rounded-full bg-gradient-to-r from-indigo-500 to-purple-600 flex items-center justify-center text-white font-bold">
-                            <img 
-                                v-if="post.avatar_url" 
-                                :src="post.avatar_url" 
+                            <img
+                                v-if="avatarUrl"
+                                :src="avatarUrl"
                                 :alt="post.display_name"
                                 class="w-full h-full rounded-full object-cover"
                                 @error="handleImageError"
@@ -178,6 +178,7 @@
 import { useAuth } from '../composables/useAuth.js';
 import { getCategoryName, getCategoryIcon } from '../services/posts.js';
 import { createSlugFromDisplayName } from '../services/profiles.js';
+import { getSignedUrlForImage } from '../services/storage.js';
 import CommentsList from './CommentsList.vue';
 
 export default {
@@ -200,8 +201,18 @@ export default {
         return {
             showOptions: false,
             showComments: false,
-            showImageModal: false
+            showImageModal: false,
+            avatarUrl: this.post.avatar_url
         };
+    },
+    async mounted() {
+        // Convertir URL de avatar si existe y no es signed URL
+        if (this.post.avatar_url && !this.post.avatar_url.includes('token=')) {
+            const { url, error } = await getSignedUrlForImage(this.post.avatar_url);
+            if (!error && url) {
+                this.avatarUrl = url;
+            }
+        }
     },
     
     computed: {

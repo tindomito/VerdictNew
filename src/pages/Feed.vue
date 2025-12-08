@@ -118,6 +118,7 @@ import CreatePost from '../components/CreatePost.vue';
 import EditPost from '../components/EditPost.vue';
 import PostCard from '../components/PostCard.vue';
 import { getPosts, getPost, deletePost, subscribeToPostsChanges, POST_CATEGORIES } from '../services/posts.js';
+import { getSignedUrlForImage } from '../services/storage.js';
 
 export default {
     name: 'Feed',
@@ -142,6 +143,22 @@ export default {
         };
     },
     methods: {
+        //Convierte URLs de imágenes a signed URLs
+        async convertImageUrlsToSigned(posts) {
+            const postsWithSignedUrls = await Promise.all(
+                posts.map(async (post) => {
+                    if (post.image_url && !post.image_url.includes('token=')) {
+                        const { url, error } = await getSignedUrlForImage(post.image_url);
+                        if (!error && url) {
+                            return { ...post, image_url: url };
+                        }
+                    }
+                    return post;
+                })
+            );
+            return postsWithSignedUrls;
+        },
+
         //Carga las publicaciones
         async loadPosts(reset = false) {
             if (reset) {
@@ -164,10 +181,13 @@ export default {
                     return;
                 }
 
+                // Convertir URLs de imágenes a signed URLs
+                const postsWithSignedUrls = await this.convertImageUrlsToSigned(posts);
+
                 if (reset) {
-                    this.posts = posts;
+                    this.posts = postsWithSignedUrls;
                 } else {
-                    this.posts = [...this.posts, ...posts];
+                    this.posts = [...this.posts, ...postsWithSignedUrls];
                 }
 
                 // Si recibimos menos posts que el pageSize, no hay más
@@ -204,13 +224,22 @@ export default {
                 return;
             }
 
+            // Convertir URL de imagen si existe
+            let postWithSignedUrl = post;
+            if (post.image_url && !post.image_url.includes('token=')) {
+                const { url, error: urlError } = await getSignedUrlForImage(post.image_url);
+                if (!urlError && url) {
+                    postWithSignedUrl = { ...post, image_url: url };
+                }
+            }
+
             // Solo agregar si estamos en "todas las categorías" o coincide la categoría
-            if (this.selectedCategory === 'all' || post.category === this.selectedCategory) {
+            if (this.selectedCategory === 'all' || postWithSignedUrl.category === this.selectedCategory) {
                 // Verificar si el post ya existe en el array (por la suscripción en tiempo real)
-                const existingIndex = this.posts.findIndex(p => p.id === post.id);
+                const existingIndex = this.posts.findIndex(p => p.id === postWithSignedUrl.id);
                 if (existingIndex === -1) {
                     // Agregar al principio del array
-                    this.posts.unshift(post);
+                    this.posts.unshift(postWithSignedUrl);
                 }
             }
         },
@@ -288,18 +317,36 @@ export default {
         setupRealtime() {
             this.realtimeChannel = subscribeToPostsChanges(
                 // onInsert
-                (newPost) => {
+                async (newPost) => {
+                    // Convertir URL de imagen si existe
+                    let postWithSignedUrl = newPost;
+                    if (newPost.image_url && !newPost.image_url.includes('token=')) {
+                        const { url, error: urlError } = await getSignedUrlForImage(newPost.image_url);
+                        if (!urlError && url) {
+                            postWithSignedUrl = { ...newPost, image_url: url };
+                        }
+                    }
+
                     // Solo agregar si estamos en "todas las categorías" o coincide la categoría
-                    if (this.selectedCategory === 'all' || newPost.category === this.selectedCategory) {
+                    if (this.selectedCategory === 'all' || postWithSignedUrl.category === this.selectedCategory) {
                         // Agregar al principio del array
-                        this.posts.unshift(newPost);
+                        this.posts.unshift(postWithSignedUrl);
                     }
                 },
                 // onUpdate
-                (updatedPost) => {
-                    const index = this.posts.findIndex(p => p.id === updatedPost.id);
+                async (updatedPost) => {
+                    // Convertir URL de imagen si existe
+                    let postWithSignedUrl = updatedPost;
+                    if (updatedPost.image_url && !updatedPost.image_url.includes('token=')) {
+                        const { url, error: urlError } = await getSignedUrlForImage(updatedPost.image_url);
+                        if (!urlError && url) {
+                            postWithSignedUrl = { ...updatedPost, image_url: url };
+                        }
+                    }
+
+                    const index = this.posts.findIndex(p => p.id === postWithSignedUrl.id);
                     if (index !== -1) {
-                        this.posts[index] = updatedPost;
+                        this.posts[index] = postWithSignedUrl;
                     }
                 },
                 // onDelete

@@ -42,12 +42,17 @@ export async function uploadPostImage(file, userId) {
             return { url: null, error };
         }
 
-        // Obtener URL pública
-        const { data: { publicUrl } } = supabase.storage
+        // Obtener URL firmada con expiración de 10 años
+        const { data: signedUrlData, error: signedUrlError } = await supabase.storage
             .from(BUCKET_NAME)
-            .getPublicUrl(data.path);
+            .createSignedUrl(data.path, 60 * 60 * 24 * 365 * 10); // 10 años en segundos
 
-        return { url: publicUrl, error: null };
+        if (signedUrlError) {
+            console.error('Error creating signed URL:', signedUrlError);
+            return { url: null, error: signedUrlError };
+        }
+
+        return { url: signedUrlData.signedUrl, error: null };
     } catch (error) {
         console.error('Error in uploadPostImage:', error);
         return { url: null, error: { message: 'Error al subir la imagen' } };
@@ -179,15 +184,70 @@ export async function uploadProfileAvatar(file, userId) {
             return { url: null, error };
         }
 
-        // Obtener URL pública
-        const { data: { publicUrl } } = supabase.storage
+        // Obtener URL firmada con expiración de 10 años
+        const { data: signedUrlData, error: signedUrlError } = await supabase.storage
             .from(BUCKET_NAME)
-            .getPublicUrl(data.path);
+            .createSignedUrl(data.path, 60 * 60 * 24 * 365 * 10); // 10 años en segundos
 
-        return { url: publicUrl, error: null };
+        if (signedUrlError) {
+            console.error('Error creating signed URL:', signedUrlError);
+            return { url: null, error: signedUrlError };
+        }
+
+        return { url: signedUrlData.signedUrl, error: null };
     } catch (error) {
         console.error('Error in uploadProfileAvatar:', error);
         return { url: null, error: { message: 'Error al subir el avatar' } };
+    }
+}
+
+/**
+ * Obtiene una URL firmada para una imagen existente
+ * Útil para convertir URLs públicas antiguas a URLs firmadas
+ * @param {string} imageUrl - URL de la imagen (pública o path)
+ * @returns {Promise<{url: string|null, error: Object|null}>}
+ */
+export async function getSignedUrlForImage(imageUrl) {
+    try {
+        if (!imageUrl) {
+            return { url: null, error: { message: 'No se proporcionó URL' } };
+        }
+
+        // Si ya es una signed URL (contiene token), devolverla tal cual
+        if (imageUrl.includes('token=')) {
+            return { url: imageUrl, error: null };
+        }
+
+        // Extraer el path del archivo de la URL pública
+        let filePath;
+        try {
+            const url = new URL(imageUrl);
+            const pathParts = url.pathname.split(`/${BUCKET_NAME}/`);
+            if (pathParts.length >= 2) {
+                filePath = pathParts[1];
+            } else {
+                // Si no se puede parsear, asumir que es un path directo
+                filePath = imageUrl;
+            }
+        } catch {
+            // Si falla el parseo de URL, asumir que es un path directo
+            filePath = imageUrl;
+        }
+
+        // Crear signed URL
+        const { data: signedUrlData, error: signedUrlError } = await supabase.storage
+            .from(BUCKET_NAME)
+            .createSignedUrl(filePath, 60 * 60 * 24 * 365 * 10); // 10 años
+
+        if (signedUrlError) {
+            console.error('Error creating signed URL:', signedUrlError);
+            return { url: null, error: signedUrlError };
+        }
+
+        return { url: signedUrlData.signedUrl, error: null };
+    } catch (error) {
+        console.error('Error in getSignedUrlForImage:', error);
+        return { url: null, error: { message: 'Error al obtener URL firmada' } };
     }
 }
 

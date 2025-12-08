@@ -159,6 +159,7 @@ import { useAuth } from '../composables/useAuth.js';
 import { useExternalProfile } from '../composables/useProfile.js';
 import { getProfileByIdentifier, createSlugFromDisplayName } from '../services/profiles.js';
 import { getPostsByUser } from '../services/posts.js';
+import { getSignedUrlForImage } from '../services/storage.js';
 import RankBadge from '../components/RankBadge.vue';
 import PostCard from '../components/PostCard.vue';
 import ProfileHeader from '../components/ProfileHeader.vue';
@@ -334,8 +335,17 @@ export default {
                 }
                 
                 console.log('=== SETTING PROFILE ===', profile);
+
+                // Convertir URL de avatar si existe
+                if (profile.avatar_url && !profile.avatar_url.includes('token=')) {
+                    const { url, error: urlError } = await getSignedUrlForImage(profile.avatar_url);
+                    if (!urlError && url) {
+                        profile.avatar_url = url;
+                    }
+                }
+
                 this.profile = profile;
-                
+
                 // Actualizar URL si se accedió por slug pero queremos mostrar el slug correcto
                 if (this.route.params.id !== profile.id) {
                     const correctSlug = createSlugFromDisplayName(profile.display_name);
@@ -374,19 +384,32 @@ export default {
         //Carga los posts del usuario
         async loadUserPosts() {
             if (!this.profile?.id) return;
-            
+
             this.postsLoading = true;
             this.postsError = null;
-            
+
             try {
                 const { posts, error } = await getPostsByUser(this.profile.id);
-                
+
                 if (error) {
                     this.postsError = error.message || 'Error al cargar publicaciones';
                     return;
                 }
-                
-                this.posts = posts || [];
+
+                // Convertir URLs de imágenes a signed URLs
+                const postsWithSignedUrls = await Promise.all(
+                    (posts || []).map(async (post) => {
+                        if (post.image_url && !post.image_url.includes('token=')) {
+                            const { url, error: urlError } = await getSignedUrlForImage(post.image_url);
+                            if (!urlError && url) {
+                                return { ...post, image_url: url };
+                            }
+                        }
+                        return post;
+                    })
+                );
+
+                this.posts = postsWithSignedUrls;
             } catch (error) {
                 console.error('Error loading user posts:', error);
                 this.postsError = 'Error inesperado al cargar publicaciones';
