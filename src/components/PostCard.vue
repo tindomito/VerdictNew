@@ -206,8 +206,8 @@ export default {
         };
     },
     async mounted() {
-        // Convertir URL de avatar si existe y no es signed URL
-        if (this.post.avatar_url && !this.post.avatar_url.includes('token=')) {
+        // Normalizar URL de avatar si existe
+        if (this.post.avatar_url) {
             const { url, error } = await getSignedUrlForImage(this.post.avatar_url);
             if (!error && url) {
                 this.avatarUrl = url;

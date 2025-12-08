@@ -143,11 +143,11 @@ export default {
         };
     },
     methods: {
-        //Convierte URLs de imágenes a signed URLs
+        //Normaliza URLs de imágenes
         async convertImageUrlsToSigned(posts) {
-            const postsWithSignedUrls = await Promise.all(
+            const postsWithNormalizedUrls = await Promise.all(
                 posts.map(async (post) => {
-                    if (post.image_url && !post.image_url.includes('token=')) {
+                    if (post.image_url) {
                         const { url, error } = await getSignedUrlForImage(post.image_url);
                         if (!error && url) {
                             return { ...post, image_url: url };
@@ -156,7 +156,7 @@ export default {
                     return post;
                 })
             );
-            return postsWithSignedUrls;
+            return postsWithNormalizedUrls;
         },
 
         //Carga las publicaciones
@@ -224,9 +224,9 @@ export default {
                 return;
             }
 
-            // Convertir URL de imagen si existe
+            // Normalizar URL de imagen si existe
             let postWithSignedUrl = post;
-            if (post.image_url && !post.image_url.includes('token=')) {
+            if (post.image_url) {
                 const { url, error: urlError } = await getSignedUrlForImage(post.image_url);
                 if (!urlError && url) {
                     postWithSignedUrl = { ...post, image_url: url };
@@ -318,9 +318,9 @@ export default {
             this.realtimeChannel = subscribeToPostsChanges(
                 // onInsert
                 async (newPost) => {
-                    // Convertir URL de imagen si existe
+                    // Normalizar URL de imagen si existe
                     let postWithSignedUrl = newPost;
-                    if (newPost.image_url && !newPost.image_url.includes('token=')) {
+                    if (newPost.image_url) {
                         const { url, error: urlError } = await getSignedUrlForImage(newPost.image_url);
                         if (!urlError && url) {
                             postWithSignedUrl = { ...newPost, image_url: url };
@@ -335,9 +335,9 @@ export default {
                 },
                 // onUpdate
                 async (updatedPost) => {
-                    // Convertir URL de imagen si existe
+                    // Normalizar URL de imagen si existe
                     let postWithSignedUrl = updatedPost;
-                    if (updatedPost.image_url && !updatedPost.image_url.includes('token=')) {
+                    if (updatedPost.image_url) {
                         const { url, error: urlError } = await getSignedUrlForImage(updatedPost.image_url);
                         if (!urlError && url) {
                             postWithSignedUrl = { ...updatedPost, image_url: url };

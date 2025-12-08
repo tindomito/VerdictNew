@@ -42,20 +42,15 @@ export async function uploadPostImage(file, userId) {
             return { url: null, error };
         }
 
-        // Obtener URL firmada con expiración de 10 años
-        // Usar fileName directamente ya que es el path que usamos para subir
-        const { data: signedUrlData, error: signedUrlError } = await supabase.storage
+        console.log('Image uploaded successfully:', data);
+
+        // Obtener URL pública
+        const { data: { publicUrl } } = supabase.storage
             .from(BUCKET_NAME)
-            .createSignedUrl(fileName, 60 * 60 * 24 * 365 * 10); // 10 años en segundos
+            .getPublicUrl(fileName);
 
-        if (signedUrlError) {
-            console.error('Error creating signed URL:', signedUrlError);
-            console.error('fileName usado:', fileName);
-            console.error('data.path devuelto:', data?.path);
-            return { url: null, error: signedUrlError };
-        }
-
-        return { url: signedUrlData.signedUrl, error: null };
+        console.log('Public URL generated:', publicUrl);
+        return { url: publicUrl, error: null };
     } catch (error) {
         console.error('Error in uploadPostImage:', error);
         return { url: null, error: { message: 'Error al subir la imagen' } };
@@ -187,20 +182,15 @@ export async function uploadProfileAvatar(file, userId) {
             return { url: null, error };
         }
 
-        // Obtener URL firmada con expiración de 10 años
-        // Usar fileName directamente ya que es el path que usamos para subir
-        const { data: signedUrlData, error: signedUrlError } = await supabase.storage
+        console.log('Avatar uploaded successfully:', data);
+
+        // Obtener URL pública
+        const { data: { publicUrl } } = supabase.storage
             .from(BUCKET_NAME)
-            .createSignedUrl(fileName, 60 * 60 * 24 * 365 * 10); // 10 años en segundos
+            .getPublicUrl(fileName);
 
-        if (signedUrlError) {
-            console.error('Error creating signed URL:', signedUrlError);
-            console.error('fileName usado:', fileName);
-            console.error('data.path devuelto:', data?.path);
-            return { url: null, error: signedUrlError };
-        }
-
-        return { url: signedUrlData.signedUrl, error: null };
+        console.log('Avatar Public URL generated:', publicUrl);
+        return { url: publicUrl, error: null };
     } catch (error) {
         console.error('Error in uploadProfileAvatar:', error);
         return { url: null, error: { message: 'Error al subir el avatar' } };
@@ -208,9 +198,8 @@ export async function uploadProfileAvatar(file, userId) {
 }
 
 /**
- * Obtiene una URL firmada para una imagen existente
- * Útil para convertir URLs públicas antiguas a URLs firmadas
- * @param {string} imageUrl - URL de la imagen (pública o path)
+ * Normaliza una URL de imagen para que use el formato público correcto
+ * @param {string} imageUrl - URL de la imagen
  * @returns {Promise<{url: string|null, error: Object|null}>}
  */
 export async function getSignedUrlForImage(imageUrl) {
@@ -219,12 +208,13 @@ export async function getSignedUrlForImage(imageUrl) {
             return { url: null, error: { message: 'No se proporcionó URL' } };
         }
 
-        // Si ya es una signed URL (contiene token), devolverla tal cual
-        if (imageUrl.includes('token=')) {
+        // Si la URL ya es correcta (del dominio de Supabase), devolverla tal cual
+        if (imageUrl.includes('supabase.co/storage/v1/object/public/')) {
             return { url: imageUrl, error: null };
         }
 
-        // Extraer el path del archivo de la URL pública
+        // Si es una URL antigua que necesita conversión, regenerar la URL pública
+        // Extraer el path del archivo
         let filePath;
         try {
             const url = new URL(imageUrl);
@@ -232,28 +222,23 @@ export async function getSignedUrlForImage(imageUrl) {
             if (pathParts.length >= 2) {
                 filePath = pathParts[1];
             } else {
-                // Si no se puede parsear, asumir que es un path directo
-                filePath = imageUrl;
+                // Si no se puede parsear, devolver la URL tal cual
+                return { url: imageUrl, error: null };
             }
         } catch {
-            // Si falla el parseo de URL, asumir que es un path directo
-            filePath = imageUrl;
+            // Si falla el parseo de URL, devolver tal cual
+            return { url: imageUrl, error: null };
         }
 
-        // Crear signed URL
-        const { data: signedUrlData, error: signedUrlError } = await supabase.storage
+        // Generar nueva URL pública
+        const { data: { publicUrl } } = supabase.storage
             .from(BUCKET_NAME)
-            .createSignedUrl(filePath, 60 * 60 * 24 * 365 * 10); // 10 años
+            .getPublicUrl(filePath);
 
-        if (signedUrlError) {
-            console.error('Error creating signed URL:', signedUrlError);
-            return { url: null, error: signedUrlError };
-        }
-
-        return { url: signedUrlData.signedUrl, error: null };
+        return { url: publicUrl, error: null };
     } catch (error) {
         console.error('Error in getSignedUrlForImage:', error);
-        return { url: null, error: { message: 'Error al obtener URL firmada' } };
+        return { url: imageUrl, error: null }; // En caso de error, devolver la URL original
     }
 }
 

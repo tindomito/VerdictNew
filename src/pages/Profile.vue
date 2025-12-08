@@ -336,8 +336,8 @@ export default {
                 
                 console.log('=== SETTING PROFILE ===', profile);
 
-                // Convertir URL de avatar si existe
-                if (profile.avatar_url && !profile.avatar_url.includes('token=')) {
+                // Normalizar URL de avatar si existe
+                if (profile.avatar_url) {
                     const { url, error: urlError } = await getSignedUrlForImage(profile.avatar_url);
                     if (!urlError && url) {
                         profile.avatar_url = url;
@@ -396,10 +396,10 @@ export default {
                     return;
                 }
 
-                // Convertir URLs de imágenes a signed URLs
-                const postsWithSignedUrls = await Promise.all(
+                // Normalizar URLs de imágenes
+                const postsWithNormalizedUrls = await Promise.all(
                     (posts || []).map(async (post) => {
-                        if (post.image_url && !post.image_url.includes('token=')) {
+                        if (post.image_url) {
                             const { url, error: urlError } = await getSignedUrlForImage(post.image_url);
                             if (!urlError && url) {
                                 return { ...post, image_url: url };
@@ -409,7 +409,7 @@ export default {
                     })
                 );
 
-                this.posts = postsWithSignedUrls;
+                this.posts = postsWithNormalizedUrls;
             } catch (error) {
                 console.error('Error loading user posts:', error);
                 this.postsError = 'Error inesperado al cargar publicaciones';
