@@ -112,7 +112,9 @@
       <div class="bg-gray-800 rounded-b-lg p-4 border-t border-gray-700">
         <form @submit.prevent="handleSendMessage" class="flex gap-2 items-end">
           <div class="flex-1">
+            <label for="private-message-input" class="sr-only">Escribe un mensaje</label>
             <textarea
+              id="private-message-input"
               v-model="newMessage"
               @keydown.enter.exact.prevent="handleSendMessage"
               placeholder="Escribe un mensaje..."

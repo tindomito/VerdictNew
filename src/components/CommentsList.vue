@@ -10,7 +10,9 @@
 
                 <!-- Input de comentario -->
                 <div class="flex-1">
+                    <label for="new-comment-textarea" class="sr-only">Escribe un comentario</label>
                     <textarea
+                        id="new-comment-textarea"
                         v-model="newCommentContent"
                         @keydown.ctrl.enter="submitComment"
                         @keydown.meta.enter="submitComment"

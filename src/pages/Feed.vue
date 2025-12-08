@@ -6,7 +6,9 @@
 
             <!-- Filtro de categorías -->
             <div class="relative w-full sm:w-auto">
+                <label for="category-filter" class="sr-only">Filtrar por categoría</label>
                 <select
+                    id="category-filter"
                     v-model="selectedCategory"
                     @change="handleCategoryChange"
                     class="w-full sm:w-auto pl-3 sm:pl-4 pr-8 sm:pr-10 py-2 text-sm sm:text-base border border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-gray-700 text-white cursor-pointer"
