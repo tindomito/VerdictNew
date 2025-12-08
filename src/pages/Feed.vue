@@ -2,14 +2,14 @@
     <div class="max-w-4xl mx-auto space-y-4 sm:space-y-6 px-4 sm:px-0">
         <!-- Header -->
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <h1 class="text-2xl sm:text-3xl font-bold text-gray-900">Feed de Publicaciones</h1>
-            
+            <h1 class="text-2xl sm:text-3xl font-bold text-white">Feed de Publicaciones</h1>
+
             <!-- Filtro de categorías -->
             <div class="relative w-full sm:w-auto">
                 <select
                     v-model="selectedCategory"
                     @change="handleCategoryChange"
-                    class="w-full sm:w-auto pl-3 sm:pl-4 pr-8 sm:pr-10 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white cursor-pointer"
+                    class="w-full sm:w-auto pl-3 sm:pl-4 pr-8 sm:pr-10 py-2 text-sm sm:text-base border border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-gray-700 text-white cursor-pointer"
                 >
                     <option value="all">📂 Todas</option>
                     <option
@@ -59,7 +59,7 @@
                 <button
                     @click="loadMore"
                     :disabled="loadingMore"
-                    class="w-full sm:w-auto px-6 py-3 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200 text-sm sm:text-base"
+                    class="w-full sm:w-auto px-6 py-3 bg-gray-800 border border-gray-600 text-white rounded-lg hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200 text-sm sm:text-base"
                 >
                     <span v-if="!loadingMore">Cargar más publicaciones</span>
                     <span v-else class="flex items-center justify-center">
@@ -74,24 +74,24 @@
         </div>
 
         <!-- Estado vacío -->
-        <div v-else class="bg-white rounded-lg shadow-md p-8 sm:p-12 text-center">
-            <div class="w-20 h-20 sm:w-24 sm:h-24 mx-auto mb-4 sm:mb-6 bg-gray-100 rounded-full flex items-center justify-center">
+        <div v-else class="bg-gray-800 rounded-lg shadow-md p-8 sm:p-12 text-center">
+            <div class="w-20 h-20 sm:w-24 sm:h-24 mx-auto mb-4 sm:mb-6 bg-gray-700 rounded-full flex items-center justify-center">
                 <svg class="w-10 h-10 sm:w-12 sm:h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                 </svg>
             </div>
-            <h3 class="text-lg sm:text-xl font-semibold text-gray-900 mb-2">
+            <h3 class="text-lg sm:text-xl font-semibold text-white mb-2">
                 No hay publicaciones aún
             </h3>
-            <p class="text-sm sm:text-base text-gray-600 mb-6">
-                {{ selectedCategory === 'all' 
-                    ? 'Sé el primero en compartir algo con la comunidad' 
+            <p class="text-sm sm:text-base text-gray-300 mb-6">
+                {{ selectedCategory === 'all'
+                    ? 'Sé el primero en compartir algo con la comunidad'
                     : 'No hay publicaciones en esta categoría' }}
             </p>
         </div>
 
         <!-- Error state -->
-        <div v-if="error" class="bg-red-50 border border-red-200 rounded-lg p-4">
+        <div v-if="error" class="bg-red-900/20 border border-red-700 rounded-lg p-4">
             <div class="flex">
                 <div class="flex-shrink-0">
                     <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
@@ -99,11 +99,11 @@
                     </svg>
                 </div>
                 <div class="ml-3">
-                    <h3 class="text-sm font-medium text-red-800">Error al cargar publicaciones</h3>
-                    <div class="mt-2 text-sm text-red-700">{{ error }}</div>
+                    <h3 class="text-sm font-medium text-red-300">Error al cargar publicaciones</h3>
+                    <div class="mt-2 text-sm text-red-400">{{ error }}</div>
                     <button
                         @click="loadPosts"
-                        class="mt-3 text-sm font-medium text-red-800 hover:text-red-900"
+                        class="mt-3 text-sm font-medium text-red-300 hover:text-red-200"
                     >
                         Reintentar
                     </button>

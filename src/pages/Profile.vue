@@ -6,19 +6,19 @@
         </div>
 
         <!-- Error state -->
-        <div v-else-if="error" class="bg-red-50 border border-red-200 rounded-md p-6">
+        <div v-else-if="error" class="bg-red-900/20 border border-red-700 rounded-md p-6">
             <div class="flex">
                 <div class="ml-3">
-                    <h3 class="text-sm font-medium text-red-800">
+                    <h3 class="text-sm font-medium text-red-300">
                         Error al cargar perfil
                     </h3>
-                    <div class="mt-2 text-sm text-red-700">
+                    <div class="mt-2 text-sm text-red-400">
                         {{ error }}
                     </div>
                     <div class="mt-4">
                         <button
                             @click="loadProfile"
-                            class="bg-red-100 hover:bg-red-200 text-red-800 px-4 py-2 rounded-md text-sm font-medium transition duration-200"
+                            class="bg-red-800 hover:bg-red-700 text-red-200 px-4 py-2 rounded-md text-sm font-medium transition duration-200"
                         >
                             Reintentar
                         </button>
@@ -41,8 +41,8 @@
         />
 
             <!-- Pestañas de contenido -->
-            <div class="bg-white rounded-lg shadow-md overflow-hidden">
-                <div class="border-b border-gray-200">
+            <div class="bg-gray-800 rounded-lg shadow-md overflow-hidden">
+                <div class="border-b border-gray-700">
                     <nav class="-mb-px flex">
                         <button
                             v-for="tab in tabs"
@@ -51,8 +51,8 @@
                             :class="[
                                 'py-4 px-6 font-medium text-sm border-b-2 transition duration-200',
                                 activeTab === tab.id
-                                    ? 'border-indigo-500 text-indigo-600'
-                                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                                    ? 'border-indigo-500 text-indigo-400'
+                                    : 'border-transparent text-gray-400 hover:text-gray-300 hover:border-gray-600'
                             ]"
                         >
                             {{ tab.name }}
@@ -74,11 +74,11 @@
                             <svg class="w-16 h-16 mx-auto mb-4 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                             </svg>
-                            <h3 class="text-lg font-medium text-gray-900 mb-2">Error al cargar publicaciones</h3>
-                            <p class="text-gray-500 mb-4">{{ postsError }}</p>
+                            <h3 class="text-lg font-medium text-white mb-2">Error al cargar publicaciones</h3>
+                            <p class="text-gray-400 mb-4">{{ postsError }}</p>
                             <button
                                 @click="loadUserPosts"
-                                class="text-indigo-600 hover:text-indigo-700 font-medium"
+                                class="text-indigo-400 hover:text-indigo-300 font-medium"
                             >
                                 Reintentar
                             </button>
@@ -99,18 +99,18 @@
                         </div>
                         
                         <!-- Sin publicaciones -->
-                        <div v-else class="text-center py-12 text-gray-500">
-                            <svg class="w-16 h-16 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div v-else class="text-center py-12 text-gray-400">
+                            <svg class="w-16 h-16 mx-auto mb-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                             </svg>
-                            <h3 class="text-lg font-medium text-gray-900 mb-2">Sin publicaciones</h3>
-                            <p class="text-gray-500">
+                            <h3 class="text-lg font-medium text-white mb-2">Sin publicaciones</h3>
+                            <p class="text-gray-400">
                                 {{ isOwnProfile ? 'Aún no has creado ninguna publicación.' : 'Este usuario no ha creado publicaciones.' }}
                             </p>
                             <RouterLink
                                 v-if="isOwnProfile"
                                 to="/feed"
-                                class="inline-block mt-4 text-indigo-600 hover:text-indigo-700 font-medium"
+                                class="inline-block mt-4 text-indigo-400 hover:text-indigo-300 font-medium"
                             >
                                 Crear mi primera publicación →
                             </RouterLink>
@@ -120,26 +120,26 @@
                     <!-- Pestaña de Información -->
                     <div v-else-if="activeTab === 'info'" class="space-y-6">
                         <div>
-                            <h3 class="text-lg font-medium text-gray-900 mb-4">Información del Usuario</h3>
+                            <h3 class="text-lg font-medium text-white mb-4">Información del Usuario</h3>
                             <dl class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div>
-                                    <dt class="text-sm font-medium text-gray-500">Rango Actual</dt>
+                                    <dt class="text-sm font-medium text-gray-400">Rango Actual</dt>
                                     <dd class="mt-1">
                                         <RankBadge :rango="profile.rango" :isPro="profile.pro" />
                                     </dd>
                                 </div>
                                 <div>
-                                    <dt class="text-sm font-medium text-gray-500">Miembro desde</dt>
-                                    <dd class="mt-1 text-sm text-gray-900">{{ memberSinceDetailed }}</dd>
+                                    <dt class="text-sm font-medium text-gray-400">Miembro desde</dt>
+                                    <dd class="mt-1 text-sm text-white">{{ memberSinceDetailed }}</dd>
                                 </div>
                                 <div>
-                                    <dt class="text-sm font-medium text-gray-500">Última actividad</dt>
-                                    <dd class="mt-1 text-sm text-gray-900">{{ lastActivityFormatted }}</dd>
+                                    <dt class="text-sm font-medium text-gray-400">Última actividad</dt>
+                                    <dd class="mt-1 text-sm text-white">{{ lastActivityFormatted }}</dd>
                                 </div>
                                 <div>
-                                    <dt class="text-sm font-medium text-gray-500">Estado</dt>
+                                    <dt class="text-sm font-medium text-gray-400">Estado</dt>
                                     <dd class="mt-1">
-                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-900/30 text-green-300">
                                             Activo
                                         </span>
                                     </dd>

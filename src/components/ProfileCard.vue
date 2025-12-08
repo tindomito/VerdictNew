@@ -1,7 +1,7 @@
 <template>
-    <div 
+    <div
         :class="[
-            'bg-white rounded-lg shadow-md overflow-hidden transition-all duration-200',
+            'bg-gray-800 rounded-lg shadow-md overflow-hidden transition-all duration-200',
             clickable ? 'hover:shadow-lg cursor-pointer' : '',
             compact ? 'p-4' : 'p-6'
         ]"
@@ -31,9 +31,9 @@
             <!-- Información del usuario -->
             <div class="flex-1 min-w-0">
                 <div class="flex items-center space-x-2 mb-1">
-                    <h3 
+                    <h3
                         :class="[
-                            'font-semibold text-gray-900 truncate',
+                            'font-semibold text-white truncate',
                             compact ? 'text-base' : 'text-lg'
                         ]"
                     >
@@ -51,17 +51,17 @@
                 </div>
 
                 <!-- Bio (si no es compact) -->
-                <p 
-                    v-if="!compact && profile.bio" 
-                    class="text-sm text-gray-600 line-clamp-2"
+                <p
+                    v-if="!compact && profile.bio"
+                    class="text-sm text-gray-300 line-clamp-2"
                 >
                     {{ profile.bio }}
                 </p>
-                
+
                 <!-- Estadísticas básicas -->
-                <div 
-                    v-if="showStats" 
-                    class="flex items-center space-x-4 mt-3 text-xs text-gray-500"
+                <div
+                    v-if="showStats"
+                    class="flex items-center space-x-4 mt-3 text-xs text-gray-400"
                 >
                     <span class="flex items-center">
                         <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -76,7 +76,7 @@
             <div v-if="showAction && !compact" class="flex-shrink-0">
                 <button
                     @click.stop="$emit('action', profile)"
-                    class="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                    class="inline-flex items-center px-3 py-2 border border-gray-600 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-300 bg-gray-700 hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                 >
                     {{ actionText }}
                 </button>
@@ -84,7 +84,7 @@
         </div>
 
         <!-- Loading state -->
-        <div v-if="loading" class="absolute inset-0 bg-white bg-opacity-75 flex items-center justify-center">
+        <div v-if="loading" class="absolute inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center">
             <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-500"></div>
         </div>
     </div>

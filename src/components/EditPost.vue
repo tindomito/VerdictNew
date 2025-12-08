@@ -1,11 +1,11 @@
 <template>
-    <div class="bg-white rounded-lg shadow-md p-6">
-        <h2 class="text-xl font-bold text-gray-900 mb-4">Editar Publicación</h2>
+    <div class="bg-gray-800 rounded-lg shadow-md p-6">
+        <h2 class="text-xl font-bold text-white mb-4">Editar Publicación</h2>
 
         <form @submit.prevent="handleSubmit">
             <!-- Selector de categoria -->
             <div class="mb-4">
-                <label for="category" class="block text-sm font-medium text-gray-700 mb-2">
+                <label for="category" class="block text-sm font-medium text-gray-300 mb-2">
                     Categoría
                 </label>
                 <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
@@ -17,8 +17,8 @@
                         :class="[
                             'flex items-center justify-center space-x-2 px-3 py-2 rounded-lg border-2 transition-all duration-200',
                             form.category === category.id
-                                ? 'border-indigo-500 bg-indigo-50 text-indigo-700'
-                                : 'border-gray-200 hover:border-indigo-300 text-gray-700'
+                                ? 'border-indigo-500 bg-indigo-900/30 text-indigo-300'
+                                : 'border-gray-600 hover:border-indigo-500 text-gray-300'
                         ]"
                     >
                         <span>{{ category.icon }}</span>
@@ -29,7 +29,7 @@
 
             <!-- Titulo -->
             <div class="mb-4">
-                <label for="title" class="block text-sm font-medium text-gray-700 mb-2">
+                <label for="title" class="block text-sm font-medium text-gray-300 mb-2">
                     Título
                 </label>
                 <input
@@ -40,16 +40,16 @@
                     maxlength="200"
                     :disabled="loading"
                     placeholder="¿De qué quieres hablar?"
-                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
+                    class="w-full px-4 py-2 bg-gray-700 text-white border border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
                 />
-                <p class="mt-1 text-xs text-gray-500">
+                <p class="mt-1 text-xs text-gray-400">
                     {{ form.title.length }}/200 caracteres
                 </p>
             </div>
 
             <!-- Contenido -->
             <div class="mb-4">
-                <label for="content" class="block text-sm font-medium text-gray-700 mb-2">
+                <label for="content" class="block text-sm font-medium text-gray-300 mb-2">
                     Contenido
                 </label>
                 <textarea
@@ -60,16 +60,16 @@
                     maxlength="5000"
                     :disabled="loading"
                     placeholder="Comparte tu análisis, opinión o predicción..."
-                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent resize-none disabled:opacity-50 disabled:cursor-not-allowed"
+                    class="w-full px-4 py-2 bg-gray-700 text-white border border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent resize-none disabled:opacity-50 disabled:cursor-not-allowed"
                 ></textarea>
-                <p class="mt-1 text-xs text-gray-500">
+                <p class="mt-1 text-xs text-gray-400">
                     {{ form.content.length }}/5000 caracteres
                 </p>
             </div>
 
             <!-- Imagen -->
             <div class="mb-4">
-                <label class="block text-sm font-medium text-gray-700 mb-2">
+                <label class="block text-sm font-medium text-gray-300 mb-2">
                     Imagen (opcional)
                 </label>
 
@@ -93,7 +93,7 @@
                 </div>
 
                 <!-- Selector de archivo -->
-                <div v-else class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-indigo-400 transition-colors">
+                <div v-else class="border-2 border-dashed border-gray-600 rounded-lg p-6 text-center hover:border-indigo-400 transition-colors bg-gray-700">
                     <input
                         ref="fileInput"
                         type="file"
@@ -113,7 +113,7 @@
                         </svg>
                         <span class="text-sm font-medium">Seleccionar imagen</span>
                     </button>
-                    <p class="mt-2 text-xs text-gray-500">
+                    <p class="mt-2 text-xs text-gray-400">
                         JPG, PNG, GIF o WebP (máx. 5MB)
                     </p>
                 </div>
@@ -125,7 +125,7 @@
             </div>
 
             <!-- Mensaje de error -->
-            <div v-if="error" class="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+            <div v-if="error" class="mb-4 p-3 bg-red-900/20 border border-red-700 rounded-lg">
                 <p class="text-sm text-red-700">{{ error }}</p>
             </div>
 

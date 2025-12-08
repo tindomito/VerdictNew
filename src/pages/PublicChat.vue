@@ -1,11 +1,11 @@
 <template>
     <div class="max-w-6xl mx-auto">
         <AppH1>Chat Global</AppH1>
-        <p class="text-gray-600 mb-6">Conecta en tiempo real con la comunidad MMA</p>
+        <p class="text-gray-400 mb-6">Conecta en tiempo real con la comunidad MMA</p>
 
         <div class="flex flex-col lg:flex-row gap-6">
             <!-- Lista de mensajes -->
-            <section class="flex-1 bg-white rounded-lg shadow-md overflow-hidden flex flex-col" style="height: 600px;">
+            <section class="flex-1 bg-gray-800 rounded-lg shadow-md overflow-hidden flex flex-col" style="height: 600px;">
                 <div class="bg-gradient-to-r from-indigo-600 to-purple-600 px-6 py-4">
                     <h2 class="text-white font-semibold flex items-center">
                         <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
@@ -22,7 +22,7 @@
                 </div>
 
                 <!-- Lista de mensajes -->
-                <div v-else ref="messageContainer" class="flex-1 overflow-y-auto p-6 space-y-4 bg-gray-50">
+                <div v-else ref="messageContainer" class="flex-1 overflow-y-auto p-6 space-y-4 bg-gray-800">
                     <div
                         v-for="message in messages"
                         :key="message.id"
@@ -54,24 +54,24 @@
                             message.user_id === currentUserId ? 'text-right' : ''
                         ]">
                             <div class="flex items-baseline space-x-2 mb-1">
-                                <RouterLink 
+                                <RouterLink
                                     :to="`/profile/${createSlugFromDisplayName(message.display_name)}`"
                                     :class="[
-                                        'font-semibold text-sm hover:text-indigo-600 transition-colors',
+                                        'font-semibold text-sm hover:text-indigo-400 transition-colors text-white',
                                         message.user_id === currentUserId ? 'order-2' : ''
                                     ]"
                                 >
                                     {{ message.display_name || 'Usuario' }}
                                 </RouterLink>
-                                <span class="text-xs text-gray-500">
+                                <span class="text-xs text-gray-400">
                                     {{ formatTime(message.created_at) }}
                                 </span>
                             </div>
                             <div :class="[
                                 'inline-block px-4 py-2 rounded-2xl shadow-sm',
-                                message.user_id === currentUserId 
-                                    ? 'bg-indigo-600 text-white rounded-br-none' 
-                                    : 'bg-white text-gray-800 rounded-bl-none'
+                                message.user_id === currentUserId
+                                    ? 'bg-indigo-600 text-white rounded-br-none'
+                                    : 'bg-gray-700 text-gray-100 rounded-bl-none'
                             ]">
                                 <p class="text-sm whitespace-pre-wrap break-words">{{ message.content }}</p>
                             </div>
@@ -79,20 +79,20 @@
                     </div>
 
                     <!-- Mensaje vacío -->
-                    <div v-if="messages.length === 0" class="text-center py-12 text-gray-500">
-                        <svg class="w-16 h-16 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div v-if="messages.length === 0" class="text-center py-12 text-gray-400">
+                        <svg class="w-16 h-16 mx-auto mb-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
                         </svg>
-                        <p class="text-gray-600 font-medium">No hay mensajes aún</p>
-                        <p class="text-sm text-gray-500 mt-1">Sé el primero en enviar un mensaje</p>
+                        <p class="text-gray-300 font-medium">No hay mensajes aún</p>
+                        <p class="text-sm text-gray-400 mt-1">Sé el primero en enviar un mensaje</p>
                     </div>
                 </div>
             </section>
 
             <!-- Formulario de envío -->
             <aside class="lg:w-80">
-                <div class="bg-white rounded-lg shadow-md p-6 sticky top-4">
-                    <h2 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                <div class="bg-gray-800 rounded-lg shadow-md p-6 sticky top-4">
+                    <h2 class="text-lg font-semibold text-white mb-4 flex items-center">
                         <svg class="w-5 h-5 mr-2 text-indigo-600" fill="currentColor" viewBox="0 0 20 20">
                             <path fill-rule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z" clip-rule="evenodd"></path>
                         </svg>
@@ -100,18 +100,18 @@
                     </h2>
 
                     <!-- Info del usuario -->
-                    <div v-if="isAuthenticated" class="mb-4 p-3 bg-indigo-50 rounded-lg">
-                        <p class="text-xs text-gray-600 mb-1">Enviando como:</p>
-                        <p class="font-medium text-gray-900">{{ userDisplayName || userEmail }}</p>
+                    <div v-if="isAuthenticated" class="mb-4 p-3 bg-indigo-900/30 rounded-lg">
+                        <p class="text-xs text-gray-400 mb-1">Enviando como:</p>
+                        <p class="font-medium text-white">{{ userDisplayName || userEmail }}</p>
                     </div>
 
                     <!-- Formulario -->
                     <form v-if="isAuthenticated" @submit.prevent="handleSubmit">
                         <div class="mb-4">
-                            <label for="content" class="block text-sm font-medium text-gray-700 mb-2">
+                            <label for="content" class="block text-sm font-medium text-gray-300 mb-2">
                                 Mensaje
                             </label>
-                            <textarea 
+                            <textarea
                                 id="content"
                                 v-model="newMessage.content"
                                 :disabled="sending"
@@ -119,9 +119,9 @@
                                 rows="4"
                                 maxlength="500"
                                 placeholder="Escribe tu mensaje..."
-                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent resize-none disabled:opacity-50"
+                                class="w-full px-3 py-2 bg-gray-700 text-white border border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent resize-none disabled:opacity-50"
                             ></textarea>
-                            <p class="mt-1 text-xs text-gray-500 text-right">
+                            <p class="mt-1 text-xs text-gray-400 text-right">
                                 {{ newMessage.content.length }}/500
                             </p>
                         </div>
@@ -147,7 +147,7 @@
                         <svg class="w-12 h-12 mx-auto mb-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
                         </svg>
-                        <p class="text-gray-600 mb-4">Debes iniciar sesión para enviar mensajes</p>
+                        <p class="text-gray-400 mb-4">Debes iniciar sesión para enviar mensajes</p>
                         <RouterLink 
                             to="/login"
                             class="inline-block bg-indigo-600 text-white py-2 px-4 rounded-lg font-medium hover:bg-indigo-700 transition duration-200"

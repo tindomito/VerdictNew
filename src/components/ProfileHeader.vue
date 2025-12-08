@@ -1,14 +1,14 @@
 <template>
-  <div class="bg-white rounded-lg shadow-md overflow-hidden">
+  <div class="bg-gray-800 rounded-lg shadow-md overflow-hidden">
     <!-- Cover area (placeholder) -->
     <div class="h-32 bg-gradient-to-r from-indigo-500 to-purple-600"></div>
-    
+
     <!-- Profile info -->
     <div class="px-6 py-6">
       <div class="flex flex-col sm:flex-row sm:items-start sm:space-x-6">
         <!-- Avatar -->
         <div class="flex-shrink-0 -mt-16 mb-4 sm:mb-0">
-          <div class="w-24 h-24 rounded-full bg-white p-1 shadow-lg">
+          <div class="w-24 h-24 rounded-full bg-gray-800 p-1 shadow-lg">
             <div 
               class="w-full h-full rounded-full bg-gradient-to-r from-indigo-500 to-purple-600 flex items-center justify-center text-white font-bold text-2xl"
             >
@@ -28,7 +28,7 @@
         <div class="flex-1 min-w-0">
           <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <h1 class="text-2xl font-bold text-gray-900 mb-2">
+              <h1 class="text-2xl font-bold text-white mb-2">
                 {{ profile.display_name || 'Usuario sin nombre' }}
               </h1>
               <div class="mb-3">
@@ -60,15 +60,15 @@
                 <button
                   @click="$emit('follow-toggle')"
                   :disabled="followLoading"
-                  class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
+                  class="inline-flex items-center px-4 py-2 border border-gray-600 text-sm font-medium rounded-md text-gray-300 bg-gray-700 hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
                 >
                   Seguir
                 </button>
-                
+
   <!-- Botón Enviar Mensaje -->
   <RouterLink
     :to="{ name: 'PrivateChat', params: { displayName: profileSlug } }"
-    class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+    class="inline-flex items-center px-4 py-2 border border-gray-600 text-sm font-medium rounded-md text-gray-300 bg-gray-700 hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
   >
     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
@@ -81,24 +81,24 @@
           
           <!-- Bio -->
           <div v-if="profile.bio" class="mt-4">
-            <p class="text-gray-700 leading-relaxed">
+            <p class="text-gray-300 leading-relaxed">
               {{ profile.bio }}
             </p>
           </div>
-          
+
           <!-- Estadísticas -->
           <div class="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div class="bg-gray-50 rounded-lg p-4 text-center">
-              <div class="text-2xl font-bold text-gray-900">{{ stats.postsCount || 0 }}</div>
-              <div class="text-sm text-gray-600">Publicaciones</div>
+            <div class="bg-gray-700 rounded-lg p-4 text-center">
+              <div class="text-2xl font-bold text-white">{{ stats.postsCount || 0 }}</div>
+              <div class="text-sm text-gray-400">Publicaciones</div>
             </div>
-            <div class="bg-gray-50 rounded-lg p-4 text-center">
-              <div class="text-2xl font-bold text-gray-900">{{ stats.followersCount || 0 }}</div>
-              <div class="text-sm text-gray-600">Seguidores</div>
+            <div class="bg-gray-700 rounded-lg p-4 text-center">
+              <div class="text-2xl font-bold text-white">{{ stats.followersCount || 0 }}</div>
+              <div class="text-sm text-gray-400">Seguidores</div>
             </div>
-            <div class="bg-gray-50 rounded-lg p-4 text-center">
-              <div class="text-2xl font-bold text-gray-900">{{ memberSinceFormatted }}</div>
-              <div class="text-sm text-gray-600">Miembro desde</div>
+            <div class="bg-gray-700 rounded-lg p-4 text-center">
+              <div class="text-2xl font-bold text-white">{{ memberSinceFormatted }}</div>
+              <div class="text-sm text-gray-400">Miembro desde</div>
             </div>
           </div>
         </div>

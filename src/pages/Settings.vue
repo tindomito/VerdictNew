@@ -10,23 +10,23 @@
         <!-- Main content -->
         <div v-else class="space-y-6">
             <!-- Mensajes de estado -->
-            <div v-if="successMessage" class="bg-green-50 border border-green-200 rounded-md p-4">
+            <div v-if="successMessage" class="bg-green-900/20 border border-green-700 rounded-md p-4">
                 <div class="flex">
                     <div class="ml-3">
-                        <div class="text-sm text-green-700">
+                        <div class="text-sm text-green-300">
                             {{ successMessage }}
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div v-if="errorMessage" class="bg-red-50 border border-red-200 rounded-md p-4">
+            <div v-if="errorMessage" class="bg-red-900/20 border border-red-700 rounded-md p-4">
                 <div class="flex">
                     <div class="ml-3">
-                        <h3 class="text-sm font-medium text-red-800">
+                        <h3 class="text-sm font-medium text-red-300">
                             Error al actualizar perfil
                         </h3>
-                        <div class="mt-2 text-sm text-red-700">
+                        <div class="mt-2 text-sm text-red-400">
                             {{ errorMessage }}
                         </div>
                     </div>
@@ -34,14 +34,14 @@
             </div>
 
             <!-- Formulario de perfil -->
-            <div class="bg-white shadow rounded-lg">
+            <div class="bg-gray-800 shadow rounded-lg">
                 <div class="px-6 py-6">
-                    <h2 class="text-lg font-medium text-gray-900 mb-6">Información Personal</h2>
+                    <h2 class="text-lg font-medium text-white mb-6">Información Personal</h2>
                     
                     <form @submit.prevent="handleUpdateProfile" class="space-y-6">
                         <!-- Avatar section -->
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                            <label class="block text-sm font-medium text-gray-300 mb-2">
                                 Foto de Perfil
                             </label>
                             <div class="flex items-center space-x-6">
@@ -59,7 +59,7 @@
                                     <div class="flex items-center space-x-2">
                                         <label
                                             for="avatar-upload"
-                                            class="cursor-pointer inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500"
+                                            class="cursor-pointer inline-flex items-center px-4 py-2 border border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-300 bg-gray-700 hover:bg-gray-600 focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500"
                                         >
                                             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
@@ -79,17 +79,17 @@
                                             type="button"
                                             @click="removeAvatar"
                                             :disabled="saveLoading"
-                                            class="inline-flex items-center px-3 py-2 border border-red-300 rounded-md shadow-sm text-sm font-medium text-red-700 bg-white hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 disabled:opacity-50"
+                                            class="inline-flex items-center px-3 py-2 border border-red-600 rounded-md shadow-sm text-sm font-medium text-red-300 bg-red-900/20 hover:bg-red-900/30 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 disabled:opacity-50"
                                         >
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
                                             </svg>
                                         </button>
                                     </div>
-                                    <p class="mt-1 text-xs text-gray-500">
+                                    <p class="mt-1 text-xs text-gray-400">
                                         JPG, PNG, GIF o WebP. Máximo 5MB.
                                     </p>
-                                    <p v-if="avatarError" class="mt-1 text-xs text-red-600">
+                                    <p v-if="avatarError" class="mt-1 text-xs text-red-400">
                                         {{ avatarError }}
                                     </p>
                                 </div>
@@ -98,7 +98,7 @@
 
                         <!-- Nombre de usuario -->
                         <div>
-                            <label for="display_name" class="block text-sm font-medium text-gray-700">
+                            <label for="display_name" class="block text-sm font-medium text-gray-300">
                                 Nombre de Usuario
                             </label>
                             <input
@@ -107,17 +107,17 @@
                                 v-model="form.display_name"
                                 :disabled="saveLoading"
                                 required
-                                class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 disabled:opacity-50"
+                                class="mt-1 block w-full px-3 py-2 bg-gray-700 text-white border border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 disabled:opacity-50"
                                 placeholder="Tu nombre de usuario"
                             />
-                            <p class="mt-1 text-xs text-gray-500">
+                            <p class="mt-1 text-xs text-gray-400">
                                 Este nombre será visible para otros usuarios
                             </p>
                         </div>
 
                         <!-- Bio -->
                         <div>
-                            <label for="bio" class="block text-sm font-medium text-gray-700">
+                            <label for="bio" class="block text-sm font-medium text-gray-300">
                                 Biografía
                             </label>
                             <textarea
@@ -125,26 +125,26 @@
                                 v-model="form.bio"
                                 :disabled="saveLoading"
                                 rows="4"
-                                class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 disabled:opacity-50"
+                                class="mt-1 block w-full px-3 py-2 bg-gray-700 text-white border border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 disabled:opacity-50"
                                 placeholder="Cuéntanos sobre ti, tu experiencia en MMA, tus luchadores favoritos..."
                             ></textarea>
-                            <p class="mt-1 text-xs text-gray-500">
+                            <p class="mt-1 text-xs text-gray-400">
                                 Máximo 500 caracteres. {{ bioCharCount }}/500
                             </p>
                         </div>
 
                         <!-- Rango (solo lectura para usuarios normales) -->
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                            <label class="block text-sm font-medium text-gray-300 mb-2">
                                 Rango Actual
                             </label>
-                            <div class="p-4 bg-gray-50 rounded-md">
-                                <RankBadge 
-                                    :rango="currentProfile?.rango || 'Novato'" 
+                            <div class="p-4 bg-gray-700 rounded-md">
+                                <RankBadge
+                                    :rango="currentProfile?.rango || 'Novato'"
                                     :isPro="currentProfile?.pro || false"
                                     :showProgress="true"
                                 />
-                                <p class="mt-2 text-xs text-gray-500">
+                                <p class="mt-2 text-xs text-gray-400">
                                     Los rangos se actualizan automáticamente según tu actividad en la comunidad
                                 </p>
                             </div>
@@ -152,16 +152,16 @@
 
                         <!-- Estado PRO -->
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                            <label class="block text-sm font-medium text-gray-300 mb-2">
                                 Estado PRO
                             </label>
-                            <div class="p-4 bg-gray-50 rounded-md">
+                            <div class="p-4 bg-gray-700 rounded-md">
                                 <div class="flex items-center justify-between">
                                     <div>
-                                        <span class="text-sm font-medium text-gray-900">
+                                        <span class="text-sm font-medium text-white">
                                             {{ currentProfile?.pro ? 'Miembro PRO' : 'Miembro Estándar' }}
                                         </span>
-                                        <p class="text-xs text-gray-500 mt-1">
+                                        <p class="text-xs text-gray-400 mt-1">
                                             {{ currentProfile?.pro ? 'Tienes acceso a funciones premium' : 'Actualiza para acceder a funciones premium' }}
                                         </p>
                                     </div>
@@ -191,7 +191,7 @@
                                 type="button"
                                 @click="resetForm"
                                 :disabled="saveLoading"
-                                class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
+                                class="inline-flex items-center px-4 py-2 border border-gray-600 text-sm font-medium rounded-md text-gray-300 bg-gray-700 hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
                             >
                                 Cancelar
                             </button>
@@ -215,34 +215,34 @@
             </div>
 
             <!-- Sección de cuenta -->
-            <div class="bg-white shadow rounded-lg">
+            <div class="bg-gray-800 shadow rounded-lg">
                 <div class="px-6 py-6">
-                    <h2 class="text-lg font-medium text-gray-900 mb-6">Configuración de Cuenta</h2>
+                    <h2 class="text-lg font-medium text-white mb-6">Configuración de Cuenta</h2>
                     
                     <div class="space-y-4">
                         <!-- Email (solo lectura) -->
                         <div>
-                            <label class="block text-sm font-medium text-gray-700">
+                            <label class="block text-sm font-medium text-gray-300">
                                 Email
                             </label>
                             <input
                                 type="email"
                                 :value="userEmail"
                                 readonly
-                                class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-gray-50 text-gray-500"
+                                class="mt-1 block w-full px-3 py-2 border border-gray-600 rounded-md shadow-sm bg-gray-700 text-gray-400"
                             />
-                            <p class="mt-1 text-xs text-gray-500">
+                            <p class="mt-1 text-xs text-gray-400">
                                 Para cambiar tu email, contáctanos
                             </p>
                         </div>
 
                         <!-- Cambiar contraseña -->
-                        <div class="pt-4 border-t border-gray-200">
-                            <h3 class="text-md font-medium text-gray-900 mb-4">Cambiar Contraseña</h3>
-                            
+                        <div class="pt-4 border-t border-gray-700">
+                            <h3 class="text-md font-medium text-white mb-4">Cambiar Contraseña</h3>
+
                             <form @submit.prevent="handleChangePassword" class="space-y-4">
                                 <div>
-                                    <label for="new_password" class="block text-sm font-medium text-gray-700">
+                                    <label for="new_password" class="block text-sm font-medium text-gray-300">
                                         Nueva Contraseña
                                     </label>
                                     <input
@@ -250,13 +250,13 @@
                                         type="password"
                                         v-model="passwordForm.newPassword"
                                         :disabled="passwordLoading"
-                                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 disabled:opacity-50"
+                                        class="mt-1 block w-full px-3 py-2 bg-gray-700 text-white border border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 disabled:opacity-50"
                                         placeholder="Mínimo 6 caracteres"
                                     />
                                 </div>
 
                                 <div>
-                                    <label for="confirm_password" class="block text-sm font-medium text-gray-700">
+                                    <label for="confirm_password" class="block text-sm font-medium text-gray-300">
                                         Confirmar Nueva Contraseña
                                     </label>
                                     <input
@@ -264,19 +264,19 @@
                                         type="password"
                                         v-model="passwordForm.confirmPassword"
                                         :disabled="passwordLoading"
-                                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 disabled:opacity-50"
+                                        class="mt-1 block w-full px-3 py-2 bg-gray-700 text-white border border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 disabled:opacity-50"
                                         placeholder="Repite la contraseña"
                                     />
                                 </div>
 
                                 <!-- Mensaje de éxito de contraseña -->
-                                <div v-if="passwordSuccess" class="p-3 bg-green-50 border border-green-200 rounded-md">
-                                    <p class="text-sm text-green-700">{{ passwordSuccess }}</p>
+                                <div v-if="passwordSuccess" class="p-3 bg-green-900/20 border border-green-700 rounded-md">
+                                    <p class="text-sm text-green-300">{{ passwordSuccess }}</p>
                                 </div>
 
                                 <!-- Mensaje de error de contraseña -->
-                                <div v-if="passwordError" class="p-3 bg-red-50 border border-red-200 rounded-md">
-                                    <p class="text-sm text-red-700">{{ passwordError }}</p>
+                                <div v-if="passwordError" class="p-3 bg-red-900/20 border border-red-700 rounded-md">
+                                    <p class="text-sm text-red-400">{{ passwordError }}</p>
                                 </div>
 
                                 <button
@@ -300,11 +300,11 @@
                         </div>
 
                         <!-- Botón de cerrar sesión -->
-                        <div class="pt-4 border-t border-gray-200">
+                        <div class="pt-4 border-t border-gray-700">
                             <button
                                 @click="handleLogout"
                                 type="button"
-                                class="inline-flex items-center px-4 py-2 border border-red-300 text-sm font-medium rounded-md text-red-700 bg-white hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+                                class="inline-flex items-center px-4 py-2 border border-red-600 text-sm font-medium rounded-md text-red-300 bg-red-900/20 hover:bg-red-900/30 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
                             >
                                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>

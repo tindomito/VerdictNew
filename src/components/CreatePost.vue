@@ -1,18 +1,18 @@
 <template>
-    <div class="bg-white rounded-lg shadow-md p-6">
-        <h2 class="text-xl font-bold text-gray-900 mb-4">Crear Publicación</h2>
-        
+    <div class="bg-gray-800 rounded-lg shadow-md p-6">
+        <h2 class="text-xl font-bold text-white mb-4">Crear Publicación</h2>
+
         <form @submit.prevent="handleSubmit">
-            
+
             <div class="mb-4">
-                <label for="category" class="block text-sm font-medium text-gray-700 mb-2">
+                <label for="category" class="block text-sm font-medium text-gray-300 mb-2">
                     Categoría
                 </label>
                 <div class="relative">
                     <select
                         id="category"
                         v-model="form.category"
-                        class="block w-full px-4 py-2 pr-8 bg-white border border-gray-300 rounded-lg appearance-none focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-gray-700 cursor-pointer"
+                        class="block w-full px-4 py-2 pr-8 bg-gray-700 text-white border border-gray-600 rounded-lg appearance-none focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent cursor-pointer"
                     >
                         <option :value="null" disabled>Selecciona una categoría...</option>
                         <option 
@@ -23,7 +23,7 @@
                             {{ category.icon }} {{ category.name }}
                         </option>
                     </select>
-                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-gray-700">
+                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-gray-400">
                         <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
                             <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/>
                         </svg>
@@ -32,7 +32,7 @@
             </div>
 
             <div class="mb-4">
-                <label for="title" class="block text-sm font-medium text-gray-700 mb-2">
+                <label for="title" class="block text-sm font-medium text-gray-300 mb-2">
                     Título
                 </label>
                 <input
@@ -43,36 +43,36 @@
                     maxlength="200"
                     :disabled="loading"
                     placeholder="¿De qué quieres hablar?"
-                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
+                    class="w-full px-4 py-2 bg-gray-700 text-white border border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
                 />
-                <p class="mt-1 text-xs text-gray-500 text-right">
+                <p class="mt-1 text-xs text-gray-400 text-right">
                     {{ form.title.length }}/200
                 </p>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                
+
                 <div class="flex flex-col">
-                    <label for="content" class="block text-sm font-medium text-gray-700 mb-2">
+                    <label for="content" class="block text-sm font-medium text-gray-300 mb-2">
                         Contenido
                     </label>
                     <textarea
                         id="content"
                         v-model="form.content"
                         required
-                        rows="4" 
+                        rows="4"
                         maxlength="5000"
                         :disabled="loading"
                         placeholder="Comparte tu análisis..."
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent resize-none disabled:opacity-50 disabled:cursor-not-allowed flex-grow"
+                        class="w-full px-4 py-2 bg-gray-700 text-white border border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent resize-none disabled:opacity-50 disabled:cursor-not-allowed flex-grow"
                     ></textarea>
-                    <p class="mt-1 text-xs text-gray-500 text-right">
+                    <p class="mt-1 text-xs text-gray-400 text-right">
                         {{ form.content.length }}/5000
                     </p>
                 </div>
 
                 <div class="flex flex-col">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                    <label class="block text-sm font-medium text-gray-300 mb-2">
                         Imagen (opcional)
                     </label>
 
@@ -80,7 +80,7 @@
                         <img
                             :src="imagePreview"
                             alt="Vista previa"
-                            class="w-full h-full rounded-lg object-cover max-h-48 border border-gray-200"
+                            class="w-full h-full rounded-lg object-cover max-h-48 border border-gray-600"
                         />
                         <button
                             type="button"
@@ -94,7 +94,7 @@
                         </button>
                     </div>
 
-                    <div v-else class="flex-grow border-2 border-dashed border-gray-300 rounded-lg p-4 flex flex-col items-center justify-center text-center hover:border-indigo-400 transition-colors bg-gray-50 h-full min-h-[120px]">
+                    <div v-else class="flex-grow border-2 border-dashed border-gray-600 rounded-lg p-4 flex flex-col items-center justify-center text-center hover:border-indigo-400 transition-colors bg-gray-700 h-full min-h-[120px]">
                         <input
                             ref="fileInput"
                             type="file"
@@ -107,7 +107,7 @@
                             type="button"
                             @click="$refs.fileInput.click()"
                             :disabled="loading"
-                            class="inline-flex flex-col items-center text-indigo-600 hover:text-indigo-700 disabled:opacity-50"
+                            class="inline-flex flex-col items-center text-indigo-400 hover:text-indigo-300 disabled:opacity-50"
                         >
                             <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
@@ -116,23 +116,23 @@
                         </button>
                     </div>
 
-                    <p v-if="imageError" class="mt-1 text-xs text-red-600">
+                    <p v-if="imageError" class="mt-1 text-xs text-red-400">
                         {{ imageError }}
                     </p>
                 </div>
             </div>
 
-            <div v-if="error" class="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
-                <p class="text-sm text-red-700">{{ error }}</p>
+            <div v-if="error" class="mb-4 p-3 bg-red-900/20 border border-red-700 rounded-lg">
+                <p class="text-sm text-red-400">{{ error }}</p>
             </div>
 
-            <div class="flex justify-end space-x-3 pt-2 border-t border-gray-100">
+            <div class="flex justify-end space-x-3 pt-2 border-t border-gray-700">
                 <button
                     v-if="showCancel"
                     type="button"
                     @click="handleCancel"
                     :disabled="loading"
-                    class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                    class="px-4 py-2 text-sm font-medium text-gray-300 bg-gray-700 border border-gray-600 rounded-lg hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                     Cancelar
                 </button>

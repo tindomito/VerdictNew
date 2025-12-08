@@ -1,5 +1,5 @@
 <template>
-    <article class="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200 overflow-hidden">
+    <article class="bg-gray-800 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200 overflow-hidden">
         <!-- Header del post -->
         <div class="p-6">
             <div class="flex items-start justify-between mb-4">
@@ -18,13 +18,13 @@
                         </div>
                     </RouterLink>
                     <div>
-                        <RouterLink 
+                        <RouterLink
                             :to="`/profile/${createSlugFromDisplayName(post.display_name)}`"
-                            class="font-semibold text-gray-900 hover:text-indigo-600 transition-colors"
+                            class="font-semibold text-white hover:text-indigo-400 transition-colors"
                         >
                             {{ post.display_name || 'Usuario' }}
                         </RouterLink>
-                        <div class="flex items-center space-x-2 text-sm text-gray-500">
+                        <div class="flex items-center space-x-2 text-sm text-gray-400">
                             <span>{{ formattedDate }}</span>
                             <span>•</span>
                             <span class="flex items-center">
@@ -38,23 +38,23 @@
                 <div v-if="isOwnPost" class="relative">
                     <button
                         @click="showOptions = !showOptions"
-                        class="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                        class="p-2 hover:bg-gray-700 rounded-full transition-colors"
                     >
-                        <svg class="w-5 h-5 text-gray-500" fill="currentColor" viewBox="0 0 20 20">
+                        <svg class="w-5 h-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
                             <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"></path>
                         </svg>
                     </button>
-                    
-                    <div v-if="showOptions" class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10 border border-gray-200">
+
+                    <div v-if="showOptions" class="absolute right-0 mt-2 w-48 bg-gray-700 rounded-md shadow-lg z-10 border border-gray-600">
                         <button
                             @click="handleEdit"
-                            class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                            class="block w-full text-left px-4 py-2 text-sm text-gray-300 hover:bg-gray-600"
                         >
                             Editar
                         </button>
                         <button
                             @click="handleDelete"
-                            class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50"
+                            class="block w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-red-900/20"
                         >
                             Eliminar
                         </button>
@@ -64,10 +64,10 @@
 
             <!-- Contenido del post -->
             <div class="mb-4">
-                <h2 class="text-xl font-bold text-gray-900 mb-2">
+                <h2 class="text-xl font-bold text-white mb-2">
                     {{ post.title }}
                 </h2>
-                <p class="text-gray-700 whitespace-pre-wrap">
+                <p class="text-gray-300 whitespace-pre-wrap">
                     {{ post.content }}
                 </p>
 
@@ -84,11 +84,11 @@
             </div>
 
             <!-- Acciones del post -->
-            <div class="flex items-center space-x-6 pt-4 border-t border-gray-200">
+            <div class="flex items-center space-x-6 pt-4 border-t border-gray-700">
                 <!-- Likes (cambiar) -->
                 <button
                     @click="handleLike"
-                    class="flex items-center space-x-2 text-gray-500 hover:text-indigo-600 transition-colors"
+                    class="flex items-center space-x-2 text-gray-400 hover:text-indigo-400 transition-colors"
                 >
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5"></path>
@@ -99,7 +99,7 @@
                 <!-- Comentarios (cambiar) -->
                 <button
                     @click="handleComment"
-                    class="flex items-center space-x-2 text-gray-500 hover:text-indigo-600 transition-colors"
+                    class="flex items-center space-x-2 text-gray-400 hover:text-indigo-400 transition-colors"
                 >
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
@@ -110,7 +110,7 @@
                 <!-- Compartir (cambiar) -->
                 <button
                     @click="handleShare"
-                    class="flex items-center space-x-2 text-gray-500 hover:text-indigo-600 transition-colors"
+                    class="flex items-center space-x-2 text-gray-400 hover:text-indigo-400 transition-colors"
                 >
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path>
@@ -155,7 +155,7 @@
                     <div class="relative max-w-7xl max-h-screen">
                         <button
                             @click="closeImageModal"
-                            class="absolute top-4 right-4 p-2 bg-white text-gray-800 rounded-full hover:bg-gray-100 transition-colors z-10"
+                            class="absolute top-4 right-4 p-2 bg-gray-800 text-white rounded-full hover:bg-gray-700 transition-colors z-10"
                         >
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
@@ -197,36 +197,36 @@
                     >
                         <div
                             @click.stop
-                            class="bg-white rounded-lg shadow-xl max-w-md w-full p-6"
+                            class="bg-gray-800 rounded-lg shadow-xl max-w-md w-full p-6"
                         >
                             <!-- Icono de advertencia -->
                             <div class="flex items-center justify-center mb-4">
-                                <div class="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center">
-                                    <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <div class="w-12 h-12 rounded-full bg-red-900/30 flex items-center justify-center">
+                                    <svg class="w-6 h-6 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
                                     </svg>
                                 </div>
                             </div>
 
                             <!-- Título -->
-                            <h3 class="text-lg font-semibold text-gray-900 text-center mb-2">
+                            <h3 class="text-lg font-semibold text-white text-center mb-2">
                                 ¿Eliminar publicación?
                             </h3>
 
                             <!-- Descripción con el título del post -->
                             <div class="mb-6">
-                                <p class="text-sm text-gray-600 text-center mb-3">
+                                <p class="text-sm text-gray-300 text-center mb-3">
                                     Estás por eliminar la siguiente publicación:
                                 </p>
-                                <div class="bg-gray-50 rounded-lg p-3 border border-gray-200">
-                                    <p class="text-sm font-medium text-gray-900 line-clamp-2">
+                                <div class="bg-gray-700 rounded-lg p-3 border border-gray-600">
+                                    <p class="text-sm font-medium text-white line-clamp-2">
                                         {{ post.title }}
                                     </p>
-                                    <p class="text-xs text-gray-500 mt-1">
+                                    <p class="text-xs text-gray-400 mt-1">
                                         {{ getCategoryIcon(post.category) }} {{ getCategoryName(post.category) }}
                                     </p>
                                 </div>
-                                <p class="text-sm text-gray-600 text-center mt-3">
+                                <p class="text-sm text-gray-300 text-center mt-3">
                                     Esta acción no se puede deshacer.
                                 </p>
                             </div>
@@ -235,7 +235,7 @@
                             <div class="flex gap-3">
                                 <button
                                     @click="cancelDelete"
-                                    class="flex-1 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors font-medium"
+                                    class="flex-1 px-4 py-2 bg-gray-700 text-gray-300 rounded-lg hover:bg-gray-600 transition-colors font-medium"
                                 >
                                     Cancelar
                                 </button>
