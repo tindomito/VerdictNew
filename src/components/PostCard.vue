@@ -202,7 +202,8 @@ export default {
             showOptions: false,
             showComments: false,
             showImageModal: false,
-            avatarUrl: this.post.avatar_url
+            avatarUrl: this.post.avatar_url,
+            postImageUrl: null
         };
     },
     async mounted() {
@@ -213,6 +214,18 @@ export default {
                 this.avatarUrl = url;
             }
         }
+        if (this.post.image_url) {
+        if (this.post.image_url.startsWith('http')) {
+            // Si ya es una URL completa (externa), úsala directo
+            this.postImageUrl = this.post.image_url;
+        } else {
+            // Si es una ruta de storage, fírmala
+            const { url, error } = await getSignedUrlForImage(this.post.image_url);
+            if (!error && url) {
+                this.postImageUrl = url;
+            }
+        }
+    }
     },
     
     computed: {
