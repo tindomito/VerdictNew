@@ -43,7 +43,7 @@ SELECT
     COALESCE(pr.display_name, 'Usuario') AS display_name,
     pr.avatar_url
 FROM publications p
-LEFT JOIN profiles pr ON p.user_id = pr.user_id;
+LEFT JOIN profiles pr ON p.user_id = pr.id;
 
 -- =============================================================================
 -- TRIGGER: Actualizar updated_at automáticamente
