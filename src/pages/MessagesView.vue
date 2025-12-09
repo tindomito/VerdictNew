@@ -82,10 +82,10 @@
         <h3 class="text-xl font-semibold text-white mb-2">No tienes conversaciones</h3>
         <p class="text-gray-400 mb-6">Comienza a chatear con otros usuarios desde sus perfiles</p>
         <RouterLink
-          to="/feed"
+          to="/publicaciones"
           class="inline-block px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition duration-200"
         >
-          Ir al Feed
+          Ir a Publicaciones
         </RouterLink>
       </div>
     </div>

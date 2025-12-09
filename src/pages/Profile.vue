@@ -63,41 +63,41 @@
                 <!-- Contenido de las pestañas -->
                 <div class="p-6">
                     <!-- Pestaña de Publicaciones -->
-                    <div v-if="activeTab === 'posts'">
-                        <!-- Loading de posts -->
-                        <div v-if="postsLoading" class="flex justify-center py-12">
+                    <div v-if="activeTab === 'publications'">
+                        <!-- Loading de publicaciones -->
+                        <div v-if="publicationsLoading" class="flex justify-center py-12">
                             <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-500"></div>
                         </div>
-                        
-                        <!-- Error cargando posts -->
-                        <div v-else-if="postsError" class="text-center py-12">
+
+                        <!-- Error cargando publicaciones -->
+                        <div v-else-if="publicationsError" class="text-center py-12">
                             <svg class="w-16 h-16 mx-auto mb-4 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                             </svg>
                             <h3 class="text-lg font-medium text-white mb-2">Error al cargar publicaciones</h3>
-                            <p class="text-gray-400 mb-4">{{ postsError }}</p>
+                            <p class="text-gray-400 mb-4">{{ publicationsError }}</p>
                             <button
-                                @click="loadUserPosts"
+                                @click="loadUserPublications"
                                 class="text-indigo-400 hover:text-indigo-300 font-medium"
                             >
                                 Reintentar
                             </button>
                         </div>
-                        
-                        <!-- Lista de posts -->
-                        <div v-else-if="posts.length > 0" class="space-y-4">
-                            <PostCard
-                                v-for="post in posts"
-                                :key="post.id"
-                                :post="post"
-                                @edit="handleEditPost"
-                                @delete="handleDeletePost"
-                                @like="handleLikePost"
-                                @comment="handleCommentPost"
-                                @share="handleSharePost"
+
+                        <!-- Lista de publicaciones -->
+                        <div v-else-if="publications.length > 0" class="space-y-4">
+                            <PublicationCard
+                                v-for="publication in publications"
+                                :key="publication.id"
+                                :publication="publication"
+                                @edit="handleEditPublication"
+                                @delete="handleDeletePublication"
+                                @like="handleLikePublication"
+                                @bookmark="handleBookmarkPublication"
+                                @share="handleSharePublication"
                             />
                         </div>
-                        
+
                         <!-- Sin publicaciones -->
                         <div v-else class="text-center py-12 text-gray-400">
                             <svg class="w-16 h-16 mx-auto mb-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -109,7 +109,7 @@
                             </p>
                             <RouterLink
                                 v-if="isOwnProfile"
-                                to="/feed"
+                                to="/publicaciones"
                                 class="inline-block mt-4 text-indigo-400 hover:text-indigo-300 font-medium"
                             >
                                 Crear mi primera publicación →
@@ -158,10 +158,10 @@ import { useRoute } from 'vue-router';
 import { useAuth } from '../composables/useAuth.js';
 import { useExternalProfile } from '../composables/useProfile.js';
 import { getProfileByIdentifier, createSlugFromDisplayName } from '../services/profiles.js';
-import { getPostsByUser } from '../services/posts.js';
+import { getPublicationsByUser, deletePublication } from '../services/publications.js';
 import { getSignedUrlForImage } from '../services/storage.js';
 import RankBadge from '../components/RankBadge.vue';
-import PostCard from '../components/PostCard.vue';
+import PublicationCard from '../components/PublicationCard.vue';
 import ProfileHeader from '../components/ProfileHeader.vue';
 import { ref, computed, onMounted, watch } from 'vue';
 
@@ -169,7 +169,7 @@ export default {
     name: 'Profile',
     components: {
         RankBadge,
-        PostCard,
+        PublicationCard,
         ProfileHeader
     },
     setup() {
@@ -189,18 +189,18 @@ export default {
             profile: null,
             loading: true,
             error: null,
-            activeTab: 'posts',
+            activeTab: 'publications',
             followLoading: false,
-            posts: [],
-            postsLoading: false,
-            postsError: null,
+            publications: [],
+            publicationsLoading: false,
+            publicationsError: null,
             stats: {
-                postsCount: 0,
+                publicationsCount: 0,
                 followersCount: 0,
                 followingCount: 0
             },
             tabs: [
-                { id: 'posts', name: 'Publicaciones' },
+                { id: 'publications', name: 'Publicaciones' },
                 { id: 'info', name: 'Información' }
             ]
         };
@@ -286,10 +286,10 @@ export default {
             if (newId && newId !== oldId) {
                 console.log('Route param changed:', { oldId, newId });
                 // Resetear estados
-                this.posts = [];
-                this.postsError = null;
+                this.publications = [];
+                this.publicationsError = null;
                 this.error = null;
-                
+
                 // Recargar perfil
                 this.loadProfile();
             }
@@ -371,93 +371,90 @@ export default {
         
         //Carga las estadísticas del perfil
         async loadStats() {
-            // Cargar posts del usuario para contar
-            await this.loadUserPosts();
-            
+            // Cargar publicaciones del usuario para contar
+            await this.loadUserPublications();
+
             this.stats = {
-                postsCount: this.posts.length,
+                publicationsCount: this.publications.length,
                 followersCount: 0,
                 followingCount: 0
             };
         },
-        
-        //Carga los posts del usuario
-        async loadUserPosts() {
+
+        //Carga las publicaciones del usuario
+        async loadUserPublications() {
             if (!this.profile?.id) return;
 
-            this.postsLoading = true;
-            this.postsError = null;
+            this.publicationsLoading = true;
+            this.publicationsError = null;
 
             try {
-                const { posts, error } = await getPostsByUser(this.profile.id);
+                const { publications, error } = await getPublicationsByUser(this.profile.id);
 
                 if (error) {
-                    this.postsError = error.message || 'Error al cargar publicaciones';
+                    this.publicationsError = error.message || 'Error al cargar publicaciones';
                     return;
                 }
 
                 // Convertir URLs de imágenes a signed URLs
-                const postsWithSignedUrls = await Promise.all(
-                    (posts || []).map(async (post) => {
-                        if (post.image_url && !post.image_url.includes('token=')) {
-                            const { url, error: urlError } = await getSignedUrlForImage(post.image_url);
+                const publicationsWithSignedUrls = await Promise.all(
+                    (publications || []).map(async (publication) => {
+                        if (publication.image_url && !publication.image_url.includes('token=')) {
+                            const { url, error: urlError } = await getSignedUrlForImage(publication.image_url);
                             if (!urlError && url) {
-                                return { ...post, image_url: url };
+                                return { ...publication, image_url: url };
                             }
                         }
-                        return post;
+                        return publication;
                     })
                 );
 
-                this.posts = postsWithSignedUrls;
+                this.publications = publicationsWithSignedUrls;
             } catch (error) {
-                console.error('Error loading user posts:', error);
-                this.postsError = 'Error inesperado al cargar publicaciones';
+                console.error('Error loading user publications:', error);
+                this.publicationsError = 'Error inesperado al cargar publicaciones';
             } finally {
-                this.postsLoading = false;
+                this.publicationsLoading = false;
             }
         },
-        
-        //Maneja la eliminación de un post
-        async handleDeletePost(postId) {
-            // Importar dinámicamente para no cargar siempre
-            const { deletePost } = await import('../services/posts.js');
-            
+
+        //Maneja la eliminación de una publicación
+        async handleDeletePublication(publicationId) {
             try {
-                const { success, error } = await deletePost(postId);
-                
+                const { success, error } = await deletePublication(publicationId);
+
                 if (error) {
                     alert('Error al eliminar la publicación');
                     return;
                 }
-                
+
                 if (success) {
                     // Remover del array local
-                    this.posts = this.posts.filter(p => p.id !== postId);
+                    this.publications = this.publications.filter(p => p.id !== publicationId);
                     // Actualizar stats
-                    this.stats.postsCount = this.posts.length;
+                    this.stats.publicationsCount = this.publications.length;
                 }
             } catch (error) {
-                console.error('Error deleting post:', error);
+                console.error('Error deleting publication:', error);
                 alert('Error inesperado al eliminar la publicación');
             }
         },
-        
-        //Placeholders para acciones de posts
-        handleEditPost(post) {
-            console.log('Edit post:', post);
+
+        //Placeholders para acciones de publicaciones
+        handleEditPublication(publication) {
+            console.log('Edit publication:', publication);
         },
-        
-        handleLikePost(postId) {
-            console.log('Like post:', postId);
+
+        handleLikePublication(publicationId) {
+            console.log('Like publication:', publicationId);
         },
-        
-        handleCommentPost(postId) {
-            console.log('Comment post:', postId);
+
+        handleBookmarkPublication(publicationId) {
+            console.log('Bookmark publication:', publicationId);
         },
-        
-        handleSharePost(post) {
-            console.log('Share post:', post);
+
+        handleSharePublication(publication) {
+            console.log('Share publication:', publication);
         },
         
         //Maneja el toggle de seguir/no seguir
