@@ -6,6 +6,7 @@ import Register from '../pages/Register.vue';
 import Profile from '../pages/Profile.vue';
 import Settings from '../pages/Settings.vue';
 import Feed from '../pages/Feed.vue';
+import Publications from '../pages/Publications.vue';
 import PrivateChat from '../pages/PrivateChat.vue';
 import Messages from '../pages/MessagesView.vue';
 
@@ -49,6 +50,14 @@ const routes = [
         path: '/feed',
         component: Feed,
         name: 'Feed',
+        meta: {
+            requiresAuth: true
+        }
+    },
+    {
+        path: '/publicaciones',
+        component: Publications,
+        name: 'Publications',
         meta: {
             requiresAuth: true
         }

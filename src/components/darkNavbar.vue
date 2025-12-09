@@ -44,15 +44,22 @@
             </RouterLink>
             <!-- Enlaces adicionales cuando esté autenticado -->
             <template v-if="isAuthenticated">
-              <RouterLink 
-                to="/feed" 
+              <RouterLink
+                to="/feed"
                 class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-white/5 hover:text-white"
                 active-class="!bg-gray-900 !text-white"
               >
                 Feed
               </RouterLink>
-              <RouterLink 
-                to="/messages" 
+              <RouterLink
+                to="/publicaciones"
+                class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-white/5 hover:text-white"
+                active-class="!bg-gray-900 !text-white"
+              >
+                Publicaciones
+              </RouterLink>
+              <RouterLink
+                to="/messages"
                 class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-white/5 hover:text-white"
                 active-class="!bg-gray-900 !text-white"
               >
@@ -261,16 +268,24 @@
       
       <!-- Enlaces adicionales cuando esté autenticado (móvil) -->
       <template v-if="isAuthenticated">
-        <RouterLink 
-          to="/feed" 
+        <RouterLink
+          to="/feed"
           @click="closeMobileMenu"
           class="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-white/5 hover:text-white"
           active-class="!bg-gray-900 !text-white"
         >
           Feed
         </RouterLink>
-        <RouterLink 
-          to="/messages" 
+        <RouterLink
+          to="/publicaciones"
+          @click="closeMobileMenu"
+          class="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-white/5 hover:text-white"
+          active-class="!bg-gray-900 !text-white"
+        >
+          Publicaciones
+        </RouterLink>
+        <RouterLink
+          to="/messages"
           @click="closeMobileMenu"
           class="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-white/5 hover:text-white"
           active-class="!bg-gray-900 !text-white"
