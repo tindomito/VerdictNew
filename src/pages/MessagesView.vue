@@ -108,7 +108,7 @@ const loading = ref(true);
 const error = ref(null);
 
 /**
- * Obtiene las iniciales de un usuario
+  Obtiene las iniciales de un usuario
  */
 function getUserInitials(name) {
   if (!name) return 'U';
