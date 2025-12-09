@@ -120,7 +120,6 @@ import EditPublication from '../components/EditPublication.vue';
 import PublicationCard from '../components/PublicationCard.vue';
 import {
     getPublications,
-    getPublication,
     deletePublication,
     subscribeToPublicationsChanges,
     PUBLICATION_CATEGORIES
@@ -221,21 +220,18 @@ export default {
         async handlePublicationCreated(createdPublication) {
             console.log('Publication created:', createdPublication);
 
-            const { publication, error } = await getPublication(createdPublication.id);
+            // Usar directamente los datos recibidos (ya incluyen display_name y avatar_url)
+            let publicationWithSignedUrl = { ...createdPublication };
 
-            if (error || !publication) {
-                console.error('Error al obtener publicación completa:', error);
-                return;
-            }
-
-            let publicationWithSignedUrl = publication;
-            if (publication.image_url && !publication.image_url.includes('token=')) {
-                const { url, error: urlError } = await getSignedUrlForImage(publication.image_url);
+            // Convertir URL de imagen si es necesario
+            if (createdPublication.image_url && !createdPublication.image_url.includes('token=')) {
+                const { url, error: urlError } = await getSignedUrlForImage(createdPublication.image_url);
                 if (!urlError && url) {
-                    publicationWithSignedUrl = { ...publication, image_url: url };
+                    publicationWithSignedUrl.image_url = url;
                 }
             }
 
+            // Agregar al feed si coincide con el filtro de categoría
             if (this.selectedCategory === 'all' || publicationWithSignedUrl.category === this.selectedCategory) {
                 const existingIndex = this.publications.findIndex(p => p.id === publicationWithSignedUrl.id);
                 if (existingIndex === -1) {

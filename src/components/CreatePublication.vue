@@ -160,6 +160,7 @@
 import { PUBLICATION_CATEGORIES, createPublication } from '../services/publications.js';
 import { uploadPostImage, validateImageFile } from '../services/storage.js';
 import { useAuth } from '../composables/useAuth.js';
+import { useProfile } from '../composables/useProfile.js';
 import { useToast } from '../composables/useToast.js';
 
 export default {
@@ -173,8 +174,15 @@ export default {
     emits: ['created', 'cancel'],
     setup() {
         const { userId } = useAuth();
+        const { displayName, avatarUrl } = useProfile();
         const { success, error: showError } = useToast();
-        return { currentUserId: userId, toastSuccess: success, toastError: showError };
+        return {
+            currentUserId: userId,
+            userDisplayName: displayName,
+            userAvatarUrl: avatarUrl,
+            toastSuccess: success,
+            toastError: showError
+        };
     },
     data() {
         return {
@@ -270,7 +278,14 @@ export default {
                     return;
                 }
 
-                this.$emit('created', publication);
+                // Emitir publicación con datos completos del usuario para actualización inmediata
+                const publicationWithUser = {
+                    ...publication,
+                    display_name: this.userDisplayName,
+                    avatar_url: this.userAvatarUrl
+                };
+
+                this.$emit('created', publicationWithUser);
 
                 this.form = {
                     title: '',
