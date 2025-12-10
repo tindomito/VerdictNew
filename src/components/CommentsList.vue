@@ -126,7 +126,6 @@ export default {
     },
     computed: {
         currentUserInitials() {
-            // TODO: Obtener del perfil del usuario
             return 'TU';
         }
     },
@@ -223,7 +222,6 @@ export default {
          * Maneja la edición de un comentario
          */
         handleEditComment(comment) {
-            // TODO: Implementar edición de comentarios
             console.log('Edit comment:', comment);
         },
 
