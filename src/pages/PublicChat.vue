@@ -163,9 +163,14 @@
 
 <script>
 import AppH1 from '../components/AppH1.vue';
-import { supabase } from '../services/supabase';
 import { useAuth } from '../composables/useAuth.js';
 import { createSlugFromDisplayName } from '../services/profiles.js';
+import {
+    getGlobalMessages,
+    sendGlobalMessage,
+    subscribeToGlobalChat,
+    unsubscribeFromGlobalChat
+} from '../services/public-chat.js';
 
 export default {
     name: 'PublicChat',
@@ -195,39 +200,35 @@ export default {
         //Envía un nuevo mensaje
         async handleSubmit() {
             if (!this.newMessage.content.trim()) return;
-            
+
             this.sending = true;
-            
+
             try {
-                const { data, error } = await supabase
-                    .from('global_chat_messages')
-                    .insert({
-                        user_id: this.currentUserId,
-                        content: this.newMessage.content.trim()
-                    })
-                    .select()
-                    .single();
-                
+                const { message, error } = await sendGlobalMessage(
+                    this.currentUserId,
+                    this.newMessage.content
+                );
+
                 if (error) {
                     console.error('Error sending message:', error);
-                    alert('Error al enviar mensaje');
+                    alert(error.message || 'Error al enviar mensaje');
                     return;
                 }
-                
-                if (data) {
+
+                if (message) {
                     this.messages.push({
-                        id: data.id,
+                        id: message.id,
                         user_id: this.currentUserId,
-                        content: data.content,
-                        created_at: data.created_at,
+                        content: message.content,
+                        created_at: message.created_at,
                         display_name: this.userDisplayName || 'Usuario',
-                        avatar_url: null 
+                        avatar_url: null
                     });
                 }
-                
+
                 // Limpiar el campo
                 this.newMessage.content = '';
-                
+
                 // Scroll al final
                 this.$nextTick(() => {
                     this.scrollToBottom();
@@ -243,20 +244,17 @@ export default {
         //Carga los mensajes iniciales
         async loadMessages() {
             this.loading = true;
-            
+
             try {
-                const { data, error } = await supabase
-                    .from('chat_messages_with_users')
-                    .select('*')
-                    .order('created_at', { ascending: true });
-                
+                const { messages, error } = await getGlobalMessages();
+
                 if (error) {
                     console.error('Error loading messages:', error);
                     return;
                 }
-                
-                this.messages = data || [];
-                
+
+                this.messages = messages;
+
                 // Scroll al final después de cargar
                 this.$nextTick(() => {
                     this.scrollToBottom();
@@ -270,41 +268,24 @@ export default {
         
         //Configura suscripción en tiempo real
         setupRealtime() {
-            this.chatChannel = supabase.channel('global_chat_realtime');
-            
-            this.chatChannel.on('postgres_changes', {
-                event: 'INSERT',
-                schema: 'public',
-                table: 'global_chat_messages'
-            }, async (payload) => {
+            this.chatChannel = subscribeToGlobalChat((message) => {
                 // Evitar duplicados: solo agregar si no existe
-                const exists = this.messages.some(msg => msg.id === payload.new.id);
+                const exists = this.messages.some(msg => msg.id === message.id);
                 if (exists) return;
-                
-                // Obtener el mensaje completo con datos del usuario
-                const { data } = await supabase
-                    .from('chat_messages_with_users')
-                    .select('*')
-                    .eq('id', payload.new.id)
-                    .single();
-                
-                if (data) {
-                    this.messages.push(data);
-                    
-                    // Auto-scroll si estoy cerca del final
-                    this.$nextTick(() => {
-                        const container = this.$refs.messageContainer;
-                        if (container) {
-                            const isNearBottom = container.scrollHeight - container.scrollTop - container.clientHeight < 100;
-                            if (isNearBottom) {
-                                this.scrollToBottom();
-                            }
+
+                this.messages.push(message);
+
+                // Auto-scroll si estoy cerca del final
+                this.$nextTick(() => {
+                    const container = this.$refs.messageContainer;
+                    if (container) {
+                        const isNearBottom = container.scrollHeight - container.scrollTop - container.clientHeight < 100;
+                        if (isNearBottom) {
+                            this.scrollToBottom();
                         }
-                    });
-                }
+                    }
+                });
             });
-            
-            this.chatChannel.subscribe();
         },
         
         //Scroll al final del chat
@@ -358,9 +339,7 @@ export default {
     },
     
     beforeUnmount() {
-        if (this.chatChannel) {
-            this.chatChannel.unsubscribe();
-        }
+        unsubscribeFromGlobalChat(this.chatChannel);
     }
 };
 </script>

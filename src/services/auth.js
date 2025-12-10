@@ -103,6 +103,35 @@ export async function updateProfile(updates) {
 }
 
 /**
+ * Actualiza la contraseña del usuario actual
+ * @param {string} newPassword - Nueva contraseña
+ * @returns {Promise<{success: boolean, error: Object|null}>}
+ */
+export async function updatePassword(newPassword) {
+    try {
+        // Validación básica
+        if (!newPassword || newPassword.length < 6) {
+            return {
+                success: false,
+                error: { message: 'La contraseña debe tener al menos 6 caracteres' }
+            };
+        }
+
+        const { error } = await supabase.auth.updateUser({
+            password: newPassword
+        });
+
+        if (error) {
+            return { success: false, error };
+        }
+
+        return { success: true, error: null };
+    } catch (error) {
+        return { success: false, error: { message: 'Error al actualizar la contraseña' } };
+    }
+}
+
+/**
  * Suscribe a cambios en el estado de autenticación
  * @param {Function} callback - Función que se ejecuta cuando cambia el estado
  * @returns {Object} Subscription object

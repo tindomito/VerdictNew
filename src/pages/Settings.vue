@@ -323,9 +323,8 @@
 import { useAuth } from '../composables/useAuth.js';
 import { useProfile } from '../composables/useProfile.js';
 import { useToast } from '../composables/useToast.js';
-import { logout } from '../services/auth.js';
+import { logout, getCurrentUser, updatePassword } from '../services/auth.js';
 import { uploadProfileAvatar, validateImageFile, deleteProfileAvatar } from '../services/storage.js';
-import { getCurrentUser } from '../services/auth.js';
 import AppH1 from '../components/AppH1.vue';
 import RankBadge from '../components/RankBadge.vue';
 
@@ -562,32 +561,21 @@ export default {
         async handleChangePassword() {
             this.passwordSuccess = null;
             this.passwordError = null;
-            
-            // Validaciones
-            if (this.passwordForm.newPassword.length < 6) {
-                this.passwordError = 'La contraseña debe tener al menos 6 caracteres';
-                return;
-            }
-            
+
+            // Validación de coincidencia de contraseñas
             if (this.passwordForm.newPassword !== this.passwordForm.confirmPassword) {
                 this.passwordError = 'Las contraseñas no coinciden';
                 return;
             }
-            
+
             this.passwordLoading = true;
-            
+
             try {
-                // Importar supabase
-                const { supabase } = await import('../services/supabase.js');
-                
-                // Actualizar contraseña
-                const { error } = await supabase.auth.updateUser({
-                    password: this.passwordForm.newPassword
-                });
-                
-                if (error) {
-                    this.passwordError = error.message || 'Error al cambiar la contraseña';
-                    this.toastError(error.message || 'Error al cambiar la contraseña');
+                const { success, error } = await updatePassword(this.passwordForm.newPassword);
+
+                if (!success) {
+                    this.passwordError = error?.message || 'Error al cambiar la contraseña';
+                    this.toastError(error?.message || 'Error al cambiar la contraseña');
                     return;
                 }
 
