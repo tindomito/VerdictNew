@@ -1,8 +1,41 @@
 <template>
-    <div class="bg-gray-800 rounded-lg shadow-md p-6">
-        <h2 class="text-xl font-bold text-white mb-4">Nueva Publicación</h2>
+    <div class="bg-gray-800 rounded-lg shadow-md overflow-hidden">
+        <!-- Header clickeable para expandir/colapsar -->
+        <button
+            type="button"
+            @click="toggleExpanded"
+            class="w-full px-6 py-4 flex items-center justify-between text-left hover:bg-gray-750 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500"
+        >
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 bg-indigo-600 rounded-full flex items-center justify-center">
+                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                    </svg>
+                </div>
+                <span class="text-xl font-bold text-white">Nueva Publicación</span>
+            </div>
+            <svg
+                class="w-5 h-5 text-gray-400 transform transition-transform duration-200"
+                :class="{ 'rotate-180': isExpanded }"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+            >
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+            </svg>
+        </button>
 
-        <form @submit.prevent="handleSubmit">
+        <!-- Contenido colapsable -->
+        <transition
+            name="collapse"
+            @enter="onEnter"
+            @after-enter="onAfterEnter"
+            @leave="onLeave"
+            @after-leave="onAfterLeave"
+        >
+            <div v-show="isExpanded" class="collapse-content">
+                <div class="px-6 pb-6 pt-2 border-t border-gray-700">
+                    <form @submit.prevent="handleSubmit">
 
             <div class="mb-4">
                 <label for="pub-category" class="block text-sm font-medium text-gray-300 mb-2">
@@ -152,7 +185,10 @@
                     </span>
                 </button>
             </div>
-        </form>
+                    </form>
+                </div>
+            </div>
+        </transition>
     </div>
 </template>
 
@@ -178,6 +214,7 @@ export default {
     },
     data() {
         return {
+            isExpanded: false,
             form: {
                 title: '',
                 content: '',
@@ -278,6 +315,7 @@ export default {
                     category: 'articulo'
                 };
                 this.removeImage();
+                this.collapseForm();
 
                 this.toastSuccess('¡Publicación creada exitosamente!');
             } catch (error) {
@@ -302,7 +340,62 @@ export default {
             } else {
                 this.$emit('cancel');
             }
+        },
+
+        toggleExpanded() {
+            this.isExpanded = !this.isExpanded;
+        },
+
+        collapseForm() {
+            this.isExpanded = false;
+        },
+
+        // Métodos para la transición de colapsar
+        onEnter(el) {
+            el.style.height = '0';
+            el.style.overflow = 'hidden';
+        },
+        onAfterEnter(el) {
+            el.style.height = el.scrollHeight + 'px';
+            setTimeout(() => {
+                el.style.height = 'auto';
+                el.style.overflow = 'visible';
+            }, 200);
+        },
+        onLeave(el) {
+            el.style.height = el.scrollHeight + 'px';
+            el.style.overflow = 'hidden';
+            // Forzar un reflow
+            el.offsetHeight;
+            el.style.height = '0';
+        },
+        onAfterLeave(el) {
+            el.style.height = '';
+            el.style.overflow = '';
         }
     }
 };
 </script>
+
+<style scoped>
+/* Transición de colapsar/expandir */
+.collapse-content {
+    transition: height 0.2s ease-out;
+}
+
+.collapse-enter-active,
+.collapse-leave-active {
+    transition: height 0.2s ease-out;
+    overflow: hidden;
+}
+
+.collapse-enter-from,
+.collapse-leave-to {
+    height: 0 !important;
+}
+
+/* Hover personalizado para el header */
+.hover\:bg-gray-750:hover {
+    background-color: rgb(55, 65, 81);
+}
+</style>
