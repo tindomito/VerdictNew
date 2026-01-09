@@ -56,13 +56,35 @@
               
               <!-- Botones para otros perfiles -->
               <template v-else>
-                <!-- Botón Seguir -->
+                <!-- Botón Seguir/Siguiendo -->
                 <button
                   @click="$emit('follow-toggle')"
                   :disabled="followLoading"
-                  class="inline-flex items-center px-4 py-2 border border-gray-600 text-sm font-medium rounded-md text-gray-300 bg-gray-700 hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
+                  :class="[
+                    'inline-flex items-center px-4 py-2 text-sm font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 transition-colors duration-200',
+                    isFollowing
+                      ? 'border border-indigo-500 text-indigo-400 bg-indigo-900/30 hover:bg-red-900/30 hover:border-red-500 hover:text-red-400'
+                      : 'border border-gray-600 text-gray-300 bg-gray-700 hover:bg-gray-600'
+                  ]"
+                  @mouseenter="hoveringFollowBtn = true"
+                  @mouseleave="hoveringFollowBtn = false"
                 >
-                  Seguir
+                  <svg v-if="followLoading" class="animate-spin -ml-1 mr-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  <template v-else>
+                    <svg v-if="isFollowing && hoveringFollowBtn" class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                    <svg v-else-if="isFollowing" class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                    <svg v-else class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                    </svg>
+                  </template>
+                  {{ followButtonText }}
                 </button>
 
   <!-- Botón Enviar Mensaje -->
@@ -108,7 +130,7 @@
 </template>
 
 <script setup>
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import RankBadge from './RankBadge.vue';
 import { createSlugFromDisplayName } from '../services/profiles.js';
 
@@ -132,10 +154,27 @@ const props = defineProps({
   followLoading: {
     type: Boolean,
     default: false
+  },
+  isFollowing: {
+    type: Boolean,
+    default: false
   }
 });
 
 defineEmits(['edit-profile', 'follow-toggle']);
+
+// Estado para hover del botón de seguir
+const hoveringFollowBtn = ref(false);
+
+/**
+ * Texto del botón de seguir basado en el estado
+ */
+const followButtonText = computed(() => {
+  if (props.followLoading) return '';
+  if (props.isFollowing && hoveringFollowBtn.value) return 'Dejar de seguir';
+  if (props.isFollowing) return 'Siguiendo';
+  return 'Seguir';
+});
 
 /**
    Computed para las iniciales del avatar

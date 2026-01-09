@@ -36,6 +36,7 @@
         :stats="stats"
         :memberSinceFormatted="memberSinceFormatted"
         :followLoading="followLoading"
+        :isFollowing="isFollowing"
         @edit-profile="$router.push('/settings')"
         @follow-toggle="handleFollowToggle"
         />
@@ -160,6 +161,7 @@ import { useExternalProfile } from '../composables/useProfile.js';
 import { getProfileByIdentifier, createSlugFromDisplayName } from '../services/profiles.js';
 import { getPublicationsByUser, deletePublication } from '../services/publications.js';
 import { getSignedUrlForImage } from '../services/storage.js';
+import { followUser, unfollowUser, checkIsFollowing, getFollowersCount, getFollowingCount } from '../services/follows.js';
 import RankBadge from '../components/RankBadge.vue';
 import PublicationCard from '../components/PublicationCard.vue';
 import ProfileHeader from '../components/ProfileHeader.vue';
@@ -191,6 +193,7 @@ export default {
             error: null,
             activeTab: 'publications',
             followLoading: false,
+            isFollowing: false,
             publications: [],
             publicationsLoading: false,
             publicationsError: null,
@@ -289,6 +292,7 @@ export default {
                 this.publications = [];
                 this.publicationsError = null;
                 this.error = null;
+                this.isFollowing = false;
 
                 // Recargar perfil
                 this.loadProfile();
@@ -371,14 +375,35 @@ export default {
         
         //Carga las estadísticas del perfil
         async loadStats() {
+            if (!this.profile?.id) return;
+
             // Cargar publicaciones del usuario para contar
             await this.loadUserPublications();
 
+            // Cargar contadores de seguidores y seguidos en paralelo
+            const [followersResult, followingResult] = await Promise.all([
+                getFollowersCount(this.profile.id),
+                getFollowingCount(this.profile.id)
+            ]);
+
             this.stats = {
                 publicationsCount: this.publications.length,
-                followersCount: 0,
-                followingCount: 0
+                followersCount: followersResult.count || 0,
+                followingCount: followingResult.count || 0
             };
+
+            // Cargar estado de seguimiento si no es el propio perfil
+            if (!this.isOwnProfile && this.currentUserId) {
+                await this.loadFollowingStatus();
+            }
+        },
+
+        //Carga el estado de seguimiento del usuario actual
+        async loadFollowingStatus() {
+            if (!this.profile?.id || !this.currentUserId) return;
+
+            const { isFollowing } = await checkIsFollowing(this.profile.id);
+            this.isFollowing = isFollowing;
         },
 
         //Carga las publicaciones del usuario
@@ -459,13 +484,46 @@ export default {
         
         //Maneja el toggle de seguir/no seguir
         async handleFollowToggle() {
-            
+            if (!this.profile?.id || !this.currentUserId) {
+                console.warn('No se puede seguir: falta ID de perfil o usuario no autenticado');
+                return;
+            }
+
             this.followLoading = true;
-            
-            setTimeout(() => {
+
+            try {
+                if (this.isFollowing) {
+                    // Dejar de seguir
+                    const { success, error } = await unfollowUser(this.profile.id);
+
+                    if (error) {
+                        console.error('Error al dejar de seguir:', error);
+                        return;
+                    }
+
+                    if (success) {
+                        this.isFollowing = false;
+                        this.stats.followersCount = Math.max(0, this.stats.followersCount - 1);
+                    }
+                } else {
+                    // Seguir
+                    const { success, error } = await followUser(this.profile.id);
+
+                    if (error) {
+                        console.error('Error al seguir:', error);
+                        return;
+                    }
+
+                    if (success) {
+                        this.isFollowing = true;
+                        this.stats.followersCount += 1;
+                    }
+                }
+            } catch (error) {
+                console.error('Error inesperado en follow toggle:', error);
+            } finally {
                 this.followLoading = false;
-                // AGREGAR lógica de seguir/no seguir?
-            }, 1000);
+            }
         },
         
         // Maneja errores de carga de imagen
