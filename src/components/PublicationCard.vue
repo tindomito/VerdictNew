@@ -114,7 +114,35 @@
                     </svg>
                     <span class="text-sm font-medium">Compartir</span>
                 </button>
+
+                <button
+                    @click="toggleComments"
+                    class="flex items-center space-x-2 text-gray-400 hover:text-blue-400 transition-colors"
+                    :class="{ 'text-blue-400': showComments }"
+                >
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                    </svg>
+                    <span class="text-sm font-medium">{{ commentsCount }}</span>
+                </button>
             </div>
+
+            <!-- Sección de comentarios -->
+            <transition
+                enter-active-class="transition ease-out duration-200"
+                enter-from-class="opacity-0 -translate-y-2"
+                enter-to-class="opacity-100 translate-y-0"
+                leave-active-class="transition ease-in duration-150"
+                leave-from-class="opacity-100 translate-y-0"
+                leave-to-class="opacity-0 -translate-y-2"
+            >
+                <CommentsList
+                    v-if="showComments"
+                    :postId="publication.id"
+                    @comment-added="handleCommentAdded"
+                    @comment-deleted="handleCommentDeleted"
+                />
+            </transition>
         </div>
 
         <!-- Modal para imagen en tamaño completo -->
@@ -235,9 +263,14 @@ import { useAuth } from '../composables/useAuth.js';
 import { getPublicationCategoryName, getPublicationCategoryIcon } from '../services/publications.js';
 import { createSlugFromDisplayName } from '../services/profiles.js';
 import { getSignedUrlForImage } from '../services/storage.js';
+import { getCommentsCount } from '../services/comments.js';
+import CommentsList from './CommentsList.vue';
 
 export default {
     name: 'PublicationCard',
+    components: {
+        CommentsList
+    },
     props: {
         publication: {
             type: Object,
@@ -259,6 +292,8 @@ export default {
             showOptions: false,
             showImageModal: false,
             showDeleteConfirmation: false,
+            showComments: false,
+            commentsCount: 0,
             avatarUrl: this.publication.avatar_url
         };
     },
@@ -269,6 +304,8 @@ export default {
                 this.avatarUrl = url;
             }
         }
+        // Cargar conteo de comentarios
+        await this.loadCommentsCount();
     },
     computed: {
         isOwnPublication() {
@@ -359,6 +396,23 @@ export default {
 
         closeImageModal() {
             this.showImageModal = false;
+        },
+
+        toggleComments() {
+            this.showComments = !this.showComments;
+        },
+
+        async loadCommentsCount() {
+            const { count } = await getCommentsCount(this.publication.id);
+            this.commentsCount = count;
+        },
+
+        handleCommentAdded() {
+            this.commentsCount++;
+        },
+
+        handleCommentDeleted() {
+            this.commentsCount = Math.max(0, this.commentsCount - 1);
         }
     }
 };
