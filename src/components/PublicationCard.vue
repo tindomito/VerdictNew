@@ -260,6 +260,7 @@
 
 <script>
 import { useAuth } from '../composables/useAuth.js';
+import { useProfile } from '../composables/useProfile.js';
 import { getPublicationCategoryName, getPublicationCategoryIcon } from '../services/publications.js';
 import { createSlugFromDisplayName } from '../services/profiles.js';
 import { getSignedUrlForImage } from '../services/storage.js';
@@ -280,8 +281,10 @@ export default {
     emits: ['edit', 'delete', 'like', 'bookmark', 'share'],
     setup() {
         const { userId } = useAuth();
+        const { isPro } = useProfile();
         return {
             currentUserId: userId,
+            isAdmin: isPro,
             getCategoryName: getPublicationCategoryName,
             getCategoryIcon: getPublicationCategoryIcon,
             createSlugFromDisplayName
@@ -308,8 +311,9 @@ export default {
         await this.loadCommentsCount();
     },
     computed: {
+        // Permite editar/eliminar si es el autor O si es Admin
         isOwnPublication() {
-            return this.publication.user_id === this.currentUserId;
+            return this.publication.user_id === this.currentUserId || this.isAdmin;
         },
 
         authorInitials() {

@@ -68,6 +68,7 @@
 
 <script>
 import { useAuth } from '../composables/useAuth.js';
+import { useProfile } from '../composables/useProfile.js';
 import { createSlugFromDisplayName } from '../services/profiles.js';
 
 export default {
@@ -81,7 +82,8 @@ export default {
     emits: ['edit', 'delete'],
     setup() {
         const { userId } = useAuth();
-        return { currentUserId: userId, createSlugFromDisplayName };
+        const { isPro } = useProfile();
+        return { currentUserId: userId, isAdmin: isPro, createSlugFromDisplayName };
     },
     data() {
         return {
@@ -90,10 +92,10 @@ export default {
     },
     computed: {
         /**
-         * Si el comentario pertenece al usuario actual
+         * Si el comentario pertenece al usuario actual O si es Admin
          */
         isOwnComment() {
-            return this.comment.user_id === this.currentUserId;
+            return this.comment.user_id === this.currentUserId || this.isAdmin;
         },
 
         /**

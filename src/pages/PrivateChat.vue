@@ -43,7 +43,7 @@
             v-for="message in messages"
             :key="message.id"
             :class="[
-              'flex gap-3',
+              'flex gap-3 group',
               message.sender_id === currentUserId ? 'flex-row-reverse' : 'flex-row'
             ]"
           >
@@ -85,15 +85,29 @@
               </div>
 
               <!-- Burbuja del mensaje -->
-              <div
-                :class="[
-                  'px-4 py-2 rounded-2xl break-words',
-                  message.sender_id === currentUserId
-                    ? 'bg-indigo-600 text-white rounded-tr-none'
-                    : 'bg-gray-700 text-gray-100 rounded-tl-none'
-                ]"
-              >
-                <p class="text-sm whitespace-pre-wrap">{{ message.content }}</p>
+              <div class="flex items-start gap-2" :class="message.sender_id === currentUserId ? 'flex-row-reverse' : ''">
+                <div
+                  :class="[
+                    'px-4 py-2 rounded-2xl break-words',
+                    message.sender_id === currentUserId
+                      ? 'bg-indigo-600 text-white rounded-tr-none'
+                      : 'bg-gray-700 text-gray-100 rounded-tl-none'
+                  ]"
+                >
+                  <p class="text-sm whitespace-pre-wrap">{{ message.content }}</p>
+                </div>
+
+                <!-- Botón eliminar (solo Admin) -->
+                <button
+                  v-if="isAdmin"
+                  @click="handleDeleteMessage(message.id)"
+                  class="p-1 text-gray-500 hover:text-red-400 hover:bg-gray-700 rounded transition-colors opacity-0 group-hover:opacity-100"
+                  title="Eliminar mensaje (Admin)"
+                >
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                  </svg>
+                </button>
               </div>
             </div>
           </div>
@@ -142,12 +156,14 @@
 import { ref, onMounted, onUnmounted, nextTick, computed } from 'vue';
 import { useRoute } from 'vue-router';
 import { useAuth } from '../composables/useAuth.js';
+import { useProfile } from '../composables/useProfile.js';
 import { useToast } from '../composables/useToast.js';
 import { getProfileByIdentifier } from '../services/profiles.js';
-import { getPrivateMessages, sendPrivateMessage, subscribeToPrivateMessages } from '../services/private-chat.js';
+import { getPrivateMessages, sendPrivateMessage, subscribeToPrivateMessages, deletePrivateMessage } from '../services/private-chat.js';
 
 const route = useRoute();
 const { userId: currentUserId, userDisplayName } = useAuth();
+const { isPro: isAdmin } = useProfile();
 const { success: toastSuccess, error: toastError } = useToast();
 
 // Estados
@@ -322,10 +338,34 @@ async function handleSendMessage() {
 //Inicializa el chat
 async function initializeChat() {
   await loadOtherUserProfile();
-  
+
   if (otherUser.value) {
     await loadMessages();
     await subscribeToMessages();
+  }
+}
+
+//Elimina un mensaje (solo Admin)
+async function handleDeleteMessage(messageId) {
+  if (!isAdmin.value) return;
+
+  if (!confirm('¿Estás seguro de que quieres eliminar este mensaje?')) return;
+
+  try {
+    const { error } = await deletePrivateMessage(messageId);
+
+    if (error) {
+      console.error('Error deleting message:', error);
+      toastError('Error al eliminar el mensaje');
+      return;
+    }
+
+    // Eliminar del array local
+    messages.value = messages.value.filter(msg => msg.id !== messageId);
+    toastSuccess('Mensaje eliminado');
+  } catch (error) {
+    console.error('Unexpected error deleting message:', error);
+    toastError('Error inesperado al eliminar el mensaje');
   }
 }
 
