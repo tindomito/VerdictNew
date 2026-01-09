@@ -25,8 +25,8 @@
                         {{ comment.display_name || 'Usuario' }}
                     </RouterLink>
 
-                    <!-- Botón de opciones (solo si es el autor) -->
-                    <div v-if="isOwnComment" class="relative">
+                    <!-- Botón de opciones (solo si es el autor o Admin) -->
+                    <div v-if="isOwnComment && !isEditing" class="relative">
                         <button
                             @click="showOptions = !showOptions"
                             class="p-1 hover:bg-gray-600 rounded-full transition-colors"
@@ -38,7 +38,7 @@
 
                         <div v-if="showOptions" class="absolute right-0 mt-2 w-32 bg-gray-800 rounded-md shadow-lg z-10 border border-gray-600">
                             <button
-                                @click="handleEdit"
+                                @click="startEditing"
                                 class="block w-full text-left px-3 py-2 text-xs text-gray-300 hover:bg-gray-700"
                             >
                                 Editar
@@ -53,7 +53,36 @@
                     </div>
                 </div>
 
-                <p class="text-sm text-gray-300 whitespace-pre-wrap break-words">
+                <!-- Modo edición -->
+                <div v-if="isEditing">
+                    <textarea
+                        v-model="editContent"
+                        @keydown.escape="cancelEditing"
+                        @keydown.ctrl.enter="saveEdit"
+                        @keydown.meta.enter="saveEdit"
+                        rows="2"
+                        class="w-full px-2 py-1 bg-gray-600 text-white border border-gray-500 rounded text-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent resize-none"
+                        ref="editTextarea"
+                    ></textarea>
+                    <div class="flex justify-end mt-2 space-x-2">
+                        <button
+                            @click="cancelEditing"
+                            class="px-2 py-1 text-xs font-medium text-gray-300 bg-gray-600 rounded hover:bg-gray-500 transition-colors"
+                        >
+                            Cancelar
+                        </button>
+                        <button
+                            @click="saveEdit"
+                            :disabled="!editContent.trim() || isSaving"
+                            class="px-2 py-1 text-xs font-medium text-white bg-indigo-600 rounded hover:bg-indigo-700 disabled:opacity-50 transition-colors"
+                        >
+                            {{ isSaving ? 'Guardando...' : 'Guardar' }}
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Modo visualización -->
+                <p v-else class="text-sm text-gray-300 whitespace-pre-wrap break-words">
                     {{ comment.content }}
                 </p>
             </div>
@@ -79,7 +108,7 @@ export default {
             required: true
         }
     },
-    emits: ['edit', 'delete'],
+    emits: ['edit', 'delete', 'save'],
     setup() {
         const { userId } = useAuth();
         const { isPro } = useProfile();
@@ -87,7 +116,10 @@ export default {
     },
     data() {
         return {
-            showOptions: false
+            showOptions: false,
+            isEditing: false,
+            editContent: '',
+            isSaving: false
         };
     },
     computed: {
@@ -140,9 +172,39 @@ export default {
         }
     },
     methods: {
-        handleEdit() {
+        startEditing() {
             this.showOptions = false;
-            this.$emit('edit', this.comment);
+            this.editContent = this.comment.content;
+            this.isEditing = true;
+            this.$nextTick(() => {
+                if (this.$refs.editTextarea) {
+                    this.$refs.editTextarea.focus();
+                }
+            });
+        },
+
+        cancelEditing() {
+            this.isEditing = false;
+            this.editContent = '';
+        },
+
+        async saveEdit() {
+            if (!this.editContent.trim() || this.isSaving) return;
+
+            this.isSaving = true;
+            this.$emit('save', {
+                commentId: this.comment.id,
+                content: this.editContent.trim()
+            });
+        },
+
+        // Método para resetear el estado después de guardar (llamado desde el padre)
+        resetEditState(success = true) {
+            this.isSaving = false;
+            if (success) {
+                this.isEditing = false;
+                this.editContent = '';
+            }
         },
 
         handleDelete() {
