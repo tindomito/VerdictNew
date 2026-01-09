@@ -52,9 +52,11 @@
             <CommentCard
                 v-for="comment in comments"
                 :key="comment.id"
+                :ref="el => { if (el) commentRefs[comment.id] = el }"
                 :comment="comment"
                 @edit="handleEditComment"
                 @delete="handleDeleteComment"
+                @save="handleSaveComment"
             />
 
             <!-- Botón cargar más comentarios -->
@@ -88,6 +90,7 @@ import {
     createComment,
     getCommentsByPost,
     deleteComment,
+    updateComment,
     subscribeToCommentsChanges
 } from '../services/comments.js';
 import { useAuth } from '../composables/useAuth.js';
@@ -121,7 +124,8 @@ export default {
             currentPage: 0,
             pageSize: 50,
             hasMore: false,
-            realtimeChannel: null
+            realtimeChannel: null,
+            commentRefs: {}
         };
     },
     computed: {
@@ -219,10 +223,47 @@ export default {
         },
 
         /**
-         * Maneja la edición de un comentario
+         * Maneja la edición de un comentario (legacy, no usado)
          */
         handleEditComment(comment) {
-            console.log('Edit comment:', comment);
+            // La edición ahora se maneja inline en CommentCard
+        },
+
+        /**
+         * Guarda los cambios de un comentario editado
+         */
+        async handleSaveComment({ commentId, content }) {
+            try {
+                const { comment, error } = await updateComment(commentId, { content });
+
+                if (error) {
+                    this.toastError('Error al actualizar comentario');
+                    // Resetear estado del CommentCard con error
+                    if (this.commentRefs[commentId]) {
+                        this.commentRefs[commentId].resetEditState(false);
+                    }
+                    return;
+                }
+
+                // Actualizar el comentario en la lista local
+                const index = this.comments.findIndex(c => c.id === commentId);
+                if (index !== -1) {
+                    this.comments[index] = { ...this.comments[index], content };
+                }
+
+                // Resetear estado del CommentCard con éxito
+                if (this.commentRefs[commentId]) {
+                    this.commentRefs[commentId].resetEditState(true);
+                }
+
+                this.toastSuccess('Comentario actualizado');
+            } catch (error) {
+                console.error('Error saving comment:', error);
+                this.toastError('Error inesperado al actualizar comentario');
+                if (this.commentRefs[commentId]) {
+                    this.commentRefs[commentId].resetEditState(false);
+                }
+            }
         },
 
         /**
