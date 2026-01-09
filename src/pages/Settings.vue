@@ -150,36 +150,34 @@
                             </div>
                         </div>
 
-                        <!-- Estado PRO -->
+                        <!-- Estado Admin -->
                         <div>
                             <label class="block text-sm font-medium text-gray-300 mb-2">
-                                Estado PRO
+                                Estado de Administrador
                             </label>
                             <div class="p-4 bg-gray-700 rounded-md">
                                 <div class="flex items-center justify-between">
                                     <div>
                                         <span class="text-sm font-medium text-white">
-                                            {{ currentProfile?.pro ? 'Miembro PRO' : 'Miembro Estándar' }}
+                                            {{ currentProfile?.pro ? 'Administrador' : 'Miembro Estándar' }}
                                         </span>
                                         <p class="text-xs text-gray-400 mt-1">
-                                            {{ currentProfile?.pro ? 'Tienes acceso a funciones premium' : 'Actualiza para acceder a funciones premium' }}
+                                            {{ currentProfile?.pro ? 'Tienes permisos de administrador' : 'Usuario estándar' }}
                                         </p>
                                     </div>
                                     <div>
-                                        <span 
+                                        <span
                                             v-if="currentProfile?.pro"
-                                            class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-gradient-to-r from-yellow-400 to-yellow-600 text-yellow-900"
+                                            class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-gradient-to-r from-red-500 to-red-700 text-white"
                                         >
-                                            ⭐ PRO
+                                            👑 Admin
                                         </span>
-                                        <button
+                                        <span
                                             v-else
-                                            type="button"
-                                            @click="handleUpgradeToPro"
-                                            class="inline-flex items-center px-3 py-1 border border-transparent text-xs font-medium rounded-full text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                                            class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-gray-600 text-gray-300"
                                         >
-                                            Actualizar a PRO
-                                        </button>
+                                            Usuario
+                                        </span>
                                     </div>
                                 </div>
                             </div>
@@ -549,12 +547,6 @@ export default {
             } finally {
                 this.saveLoading = false;
             }
-        },
-        
-        // Maneja la actualización a PRO (placeholder)
-        async handleUpgradeToPro() {
-            // Por ahora solo un placeholder
-            alert('Funcionalidad de actualización a PRO próximamente disponible');
         },
         
         // Maneja el cambio de contraseña

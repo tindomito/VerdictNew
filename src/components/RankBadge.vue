@@ -11,12 +11,12 @@
             {{ rango }}
         </span>
         
-        <!-- Badge PRO (opcional) -->
-        <span 
-            v-if="isPro" 
-            class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold bg-gradient-to-r from-yellow-400 to-yellow-600 text-yellow-900"
+        <!-- Badge Admin (opcional) -->
+        <span
+            v-if="isPro"
+            class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold bg-gradient-to-r from-red-500 to-red-700 text-white"
         >
-            ⭐ PRO
+            👑 Admin
         </span>
         
         <!-- Indicador de progreso (opcional) -->
@@ -47,7 +47,7 @@ export default {
             required: true,
             validator: (value) => RANGOS.includes(value)
         },
-        // Si el usuario tiene suscripcion PRO
+        // Si el usuario es Admin (campo pro en base de datos)
         isPro: {
             type: Boolean,
             default: false
